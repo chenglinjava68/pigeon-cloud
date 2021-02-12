@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yiidii.pigeon.rbac.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="cn.yiidii.pigeon.rbac.api.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="name" property="avatar"/>
+        <result column="email" property="salt"/>
+        <result column="mobile" property="mobile"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="desc" property="desc"/>
+        <result column="sex" property="sex"/>
+        <result column="pwd_err_times" property="pwdErrTimes"/>
+        <result column="last_pwd_err_time" property="lastPwdErrTime"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="updated_by" property="updatedBy"/>
+    </resultMap>
+
+    <resultMap id="UserDTOResultMap" type="cn.yiidii.pigeon.rbac.api.dto.UserDTO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <collection property="roles" ofType="cn.yiidii.pigeon.rbac.api.dto.RoleDTO">
+            <id column="rid" property="id"/>
+            <result column="rname" property="name"/>
+            <result column="rdesc" property="desc"/>
+            <result column="state" property="state"/>
+        </collection>
+        <collection property="resources" ofType="cn.yiidii.pigeon.rbac.api.dto.ResourceDTO">
+            <id column="resid" property="id"/>
+            <result column="code" property="code"/>
+        </collection>
+    </resultMap>
+
+    <select id="getUserDTOByUsername" resultMap="UserDTOResultMap" resultType="cn.yiidii.pigeon.rbac.api.dto.UserDTO">
+        SELECT
+            u.*,
+            r.id rid, r.name rname, r.desc rdesc, r.state,
+            res.id resid, res.code
+		FROM
+			user u
+			LEFT JOIN user_role ur ON u.id = ur.user_id
+			LEFT JOIN role r ON r.id = ur.role_id
+			LEFT JOIN role_resource rr ON rr.role_id = r.id
+			LEFT JOIN resource res ON res.id = rr.resource_id
+		WHERE
+			u.username = #{username}
+    </select>
+    <select id="getUserPermissionByUid" resultType="java.lang.String">
+
+    </select>
+
+
+</mapper>
