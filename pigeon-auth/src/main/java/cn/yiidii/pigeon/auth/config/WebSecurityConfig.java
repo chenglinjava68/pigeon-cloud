@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -19,6 +21,8 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @Configuration
 @EnableWebSecurity
+
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @PostConstruct
@@ -32,14 +36,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .formLogin()
+                .loginPage("/loginPage")
+                .loginProcessingUrl("/login")
+                .and()
                 .csrf().disable() //去除csrf攻击的配置，以便除get请求方式，其他请求方式也能访问接口
                 .authorizeRequests()
-                .antMatchers("/test/**").permitAll()
+                .antMatchers("/loginPage", "/login", "/test/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin(); //允许表单登陆
+        ; //允许表单登陆
     }
 
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/static/**");
+    }
 
     /**
      * 认证管理器
