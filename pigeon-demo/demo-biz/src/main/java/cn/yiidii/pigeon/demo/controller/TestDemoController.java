@@ -1,4 +1,4 @@
-package cn.yiidii.pigeon.common.security.demo.controller;
+package cn.yiidii.pigeon.demo.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.exception.BizException;
@@ -14,24 +14,28 @@ import org.springframework.web.bind.annotation.*;
  * @create: 2021-02-11 13:35
  */
 @RestController
-@RequestMapping("test")
 @Slf4j
 @RequiredArgsConstructor
 public class TestDemoController {
 
     private final UserFeign userFeign;
 
-    @GetMapping("hello")
+    @GetMapping("/test/hello")
     public R<String> hello() {
         return R.ok(null, "hello demo");
     }
 
-    @GetMapping("biz")
+    @GetMapping("/test/biz")
     public R<String> biz(@RequestParam Integer code) {
         if (code == 0) {
             throw new BizException("biz exception");
         }
         return R.ok(null, "biz result");
+    }
+
+    @GetMapping("aaa")
+    public R<UserDTO> aaa() {
+        return R.ok(null, "aaa");
     }
 
     @GetMapping("user/{username}")
