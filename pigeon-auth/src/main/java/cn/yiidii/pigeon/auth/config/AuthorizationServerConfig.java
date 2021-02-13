@@ -1,7 +1,6 @@
 package cn.yiidii.pigeon.auth.config;
 
 import cn.yiidii.pigeon.common.security.config.TokenStoreConfig;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
@@ -46,7 +44,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @PostConstruct
     public void init() {
-        log.info("===== AuthorizationServerConfig init...");
+        log.info("=== auth === AuthorizationServerConfig init...");
     }
 
     @Autowired
