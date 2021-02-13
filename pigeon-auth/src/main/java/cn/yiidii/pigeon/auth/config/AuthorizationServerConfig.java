@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -71,7 +70,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 //客户端可以访问的资源列表
                 .resourceIds("demo_resource_1", "demo_resource_2")
                 //客户端的密钥
-                .secret(new BCryptPasswordEncoder().encode("123456"))
+                .secret("123456")
                 //oAuth2.0支持的五种授权类型
                 .authorizedGrantTypes("password", "client_credentials", "authorization_code", "implicit", "refresh_token")
                 //允许授权的范围
@@ -115,6 +114,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authorizationCodeServices(authorizationCodeServices)
                 //自己配置的令牌管理
                 .tokenServices(tokenServices())
+                // 访问端点映射
+                .pathMapping("/oauth/confirm_access","/custom/confirm_access")
                 //允许get，post请求获取 token,及访问端点 oauth/token
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
     }
