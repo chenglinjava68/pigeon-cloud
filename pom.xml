@@ -13,6 +13,7 @@
         <module>pigeon-auth</module>
         <module>pigeon-demo</module>
         <module>pigeon-rbac</module>
+        <module>pigeon-gateway</module>
     </modules>
 
     <properties>

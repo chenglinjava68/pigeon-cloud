@@ -1,0 +1,30 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: '@project.artifactId@'
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        shared-configs:
+          - dataId: mysql.yml
+            refresh: true
+          - dataId: common.yml
+            refresh: true
+          - dataId: redis.yml
+            refresh: false
+        namespace: 0f3a40b9-e065-4e5b-9d87-d7d16c85f107
+        enabled: true
+        username: nacos
+        password: nacos
+      discovery:
+        service: '@project.artifactId@'
+        username: nacos
+        password: nacos
+        server-addr: 127.0.0.1:8848
+        namespace:  0f3a40b9-e065-4e5b-9d87-d7d16c85f107
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
