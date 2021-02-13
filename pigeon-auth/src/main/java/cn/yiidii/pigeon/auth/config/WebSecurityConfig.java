@@ -21,8 +21,7 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @Configuration
 @EnableWebSecurity
-
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @PostConstruct

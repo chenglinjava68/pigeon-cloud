@@ -7,6 +7,7 @@ import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,25 +26,39 @@ public class TestDemoController {
         return R.ok(null, "hello demo");
     }
 
-    @GetMapping("/test/biz")
-    public R<String> biz(@RequestParam Integer code) {
-        if (code == 0) {
-            throw new BizException("biz exception");
-        }
-        return R.ok(null, "biz result");
-    }
-
+    /**
+     * 需要登陆，但不需要权限
+     * @return
+     */
     @GetMapping("aaa")
     public R<UserDTO> aaa() {
         return R.ok(null, "aaa");
     }
 
+    /**
+     * 需要登陆，但不需要权限
+     * @return
+     */
+    @GetMapping("bbb")
+    @PreAuthorize("hasAuthority('bbb')")
+    public R<UserDTO> bbb() {
+        return R.ok(null, "bbb");
+    }
+
+    /**
+     * 需要登陆，且需要user权限
+     * @param username
+     * @return
+     */
     @GetMapping("user/{username}")
+    @PreAuthorize("hasAuthority('user')")
     public R<UserDTO> user(@PathVariable String username) {
         R<UserDTO> userDTOResp = userFeign.getUserDTOByUsername(username);
         log.info("test user: " + JSONObject.toJSON(userDTOResp));
         return userDTOResp;
     }
+
+
 
 
 }
