@@ -1,0 +1,38 @@
+version: '2'
+services:
+  pigeon-gateway:
+    build:
+      context: ./pigeon-gateway
+    restart: always
+    ports:
+      - 1140:1140
+    container_name: pigeon-gateway
+    hostname: pigeon-gateway
+
+  pigeon-rbac:
+    build:
+      context: ./pigeon-rbac/rbac-biz
+    restart: always
+    ports:
+      - 1141:1141
+    container_name: pigeon-rbac
+    hostname: pigeon-rbac
+
+
+  pigeon-auth:
+    build:
+      context: ./pigeon-auth
+    restart: always
+    ports:
+      - 1142:1142
+    container_name: pigeon-auth
+    hostname: pigeon-auth
+
+  pigeon-demo:
+    build:
+      context: ./pigeon-demo/demo-biz
+    restart: always
+    ports:
+      - 1150:1150
+    container_name: pigeon-demo
+    hostname: pigeon-demo
