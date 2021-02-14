@@ -1,6 +1,8 @@
 package cn.yiidii.pigeon.auth.config;
 
+import cn.yiidii.pigeon.common.security.config.IgnoreUrlProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @author: YiiDii Wang
@@ -29,11 +32,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         log.info("=== auth === WebSecurityConfig init...");
     }
 
+    @Autowired
+    private IgnoreUrlProperties ignoreUrlProperties;
+
     /**
      * 安全拦截机制
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        List<String> ignoreUrls = ignoreUrlProperties.getIgnoreUrls();
+        log.info("WebSecurityConfig ignoreUrls: {}", ignoreUrls);
         http
                 .formLogin()
                 .loginPage("/loginPage")
@@ -41,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable() //去除csrf攻击的配置，以便除get请求方式，其他请求方式也能访问接口
                 .authorizeRequests()
-                .antMatchers("/loginPage", "/login", "/test/**").permitAll()
+                .antMatchers(ignoreUrls.toArray(new String[ignoreUrls.size()])).permitAll()
                 .anyRequest().authenticated()
                 .and()
         ; //允许表单登陆
