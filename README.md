@@ -4,17 +4,21 @@
 
 ### 一、项目介绍
 
-| 工程名      | 说明                   |
-| ----------- | ---------------------- |
-| pigeon-auth | 认证服务               |
-| pigeon-rbac | 基于角色的权限管理模块 |
-| pigeon-demo | demo服务               |
+```
+pigeon-cloud-parent
+    ├───pigeon-auth          -- 认证服务器           
+    ├───pigeon-demo          -- 测试demo模块                 
+    ├───pigeon-gateway       -- 网关       
+    └───pigeon-rbac			 -- 用户管理模块
+```
 
 
 
 ### 二、项目特性
 
-待补充
+
+
+
 
 ### 三、运行项目
 
