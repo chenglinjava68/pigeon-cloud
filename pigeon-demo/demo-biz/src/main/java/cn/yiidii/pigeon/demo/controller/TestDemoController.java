@@ -89,7 +89,7 @@ public class TestDemoController {
      * @return
      */
     @GetMapping("bbb")
-    @PreAuthorize("hasAuthority('bbb')")
+    @PreAuthorize("@pms.hasPermission('bbb')")
     @ApiOperation(value = "bbb接口", notes = "需要登陆，且需要[bbb]权限")
     public R<UserDTO> bbb() {
         return R.ok(null, "bbb");
@@ -102,7 +102,7 @@ public class TestDemoController {
      * @return
      */
     @GetMapping("user/{username}")
-    @PreAuthorize("hasAuthority('user')")
+    @PreAuthorize("@pms.hasPermission('user')")
     @ApiOperation(value = "user接口", notes = "需要登陆，且需要[user]权限")
     @ApiImplicitParam(name = "username", value = "用户名", required = true, paramType = "path", dataType = "String", defaultValue = "")
     public R<UserDTO> user(@PathVariable String username) {
