@@ -7,18 +7,21 @@ import cn.yiidii.pigeon.rbac.service.IOauthClientDetailsService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//@Api(tags = "客户端接口")
-//@RestController
-//@RequestMapping("/clients")
-//@Slf4j
-//@AllArgsConstructor
+@Api(tags = "客户端接口")
+@RestController
+@RequestMapping("/clients")
+@Slf4j
+@AllArgsConstructor
 public class OauthClientDetailsController {
 
     private IOauthClientDetailsService iOauthClientDetailsService;
