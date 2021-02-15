@@ -24,6 +24,11 @@
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-security</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
             <artifactId>pigeon-knife4j</artifactId>
             <version>1.0.0</version>
         </dependency>
