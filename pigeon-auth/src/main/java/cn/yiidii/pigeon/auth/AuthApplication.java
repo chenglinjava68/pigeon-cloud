@@ -1,6 +1,7 @@
 package cn.yiidii.pigeon.auth;
 
 import cn.yiidii.pigeon.common.core.constant.BizConstants;
+import cn.yiidii.pigeon.common.knife4j.annotation.EnablePigeonKnife4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @ComponentScan({BizConstants.BUSINESS_PACKAGE})
 @EnableFeignClients(value = BizConstants.BUSINESS_PACKAGE)
+@EnablePigeonKnife4j
 public class AuthApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthApplication.class, args);
