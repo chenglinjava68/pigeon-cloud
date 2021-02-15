@@ -25,7 +25,7 @@ public interface UserFeign {
      * @param username 用户名
      * @return
      */
-    @GetMapping("/user/info/{username}")
+    @GetMapping("/user-anno/info/{username}")
     R<UserDTO> getUserDTOByUsername(@PathVariable("username") String username);
 
 }
