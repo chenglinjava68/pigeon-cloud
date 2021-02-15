@@ -2,6 +2,8 @@ package cn.yiidii.pigeon.demo.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.redis.RedisOps;
+import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
+import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import com.alibaba.fastjson.JSONObject;
@@ -9,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -59,6 +62,14 @@ public class TestDemoController {
     @ApiImplicitParam(name = "name", value = "变量名称", required = true, paramType = "query", dataType = "String", defaultValue = "")
     public R<String> env(@RequestParam String name) {
         return R.ok(null, env.getProperty(name));
+    }
+
+    @GetMapping("/test/url")
+    @ApiOperation(value = "测试httpclient")
+    @SneakyThrows
+    public R<HttpClientResult> url() {
+        HttpClientResult httpClientResult = HttpClientUtil.doGet("http://openapi.yiidii.cn:65531/xjj/cdk/info?cdkId=114130");
+        return R.ok(httpClientResult, "");
     }
 
     /**
