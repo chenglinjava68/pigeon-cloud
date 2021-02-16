@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.auth.service.impl;
 
 import cn.yiidii.pigeon.auth.service.IThirdPartyService;
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,11 @@ public class ThirdPartyServiceImpl implements IThirdPartyService {
     @Override
     public UserDTO save(AuthUser authUser) {
         UserDTO userDTO = transAuthUserToUserDTO(authUser);
-        R<UserDTO> userDTOR = userFeign.create(userDTO);
-        return userDTOR.getData();
+        R<UserDTO> resp = userFeign.create(userDTO);
+        if (resp.getCode() != 0) {
+            throw new BizException(resp.getMsg());
+        }
+        return resp.getData();
     }
 
     private UserDTO transAuthUserToUserDTO(AuthUser authUser) {
