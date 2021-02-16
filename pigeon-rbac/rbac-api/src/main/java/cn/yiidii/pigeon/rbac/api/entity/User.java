@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User extends Entity<Long> {
 
+    @NotBlank(message = "用户名不能为空")
     private String username;
     @TableField(value = "password")
     private String password;

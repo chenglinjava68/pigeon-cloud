@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
+import com.alibaba.fastjson.JSONObject;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,11 @@ public class UserFeignFallBack implements UserFeign {
     @Override
     public R<UserDTO> getUserDTOByUsername(String username) {
         log.error("feign 查询用户信息失败:{},{}", username, cause);
-        return R.failed(StrUtil.format("查询用户[{}]信息失败, 原因: {}", username,  cause.getMessage()));
+        return R.failed(StrUtil.format("查询用户[{}]信息失败, 原因: {}", username, cause.getMessage()));
+    }
+
+    @Override
+    public R<UserDTO> create(UserDTO userDTO) {
+        return R.failed(StrUtil.format("添加用户失败[{}], 原因：{}", userDTO.getUsername(), cause.getMessage()));
     }
 }

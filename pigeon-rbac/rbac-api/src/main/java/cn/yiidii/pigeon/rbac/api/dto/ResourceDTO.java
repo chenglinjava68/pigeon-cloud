@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.dto;
 
+import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
@@ -10,11 +11,6 @@ import io.swagger.annotations.ApiModel;
  */
 @Data
 @ApiModel("资源DTO")
-public class ResourceDTO {
+public class ResourceDTO extends Resource {
 
-    @ApiModelProperty(value = "ID")
-    private Long id;
-
-    @ApiModelProperty(value = "资源编码")
-    private String code;
 }
