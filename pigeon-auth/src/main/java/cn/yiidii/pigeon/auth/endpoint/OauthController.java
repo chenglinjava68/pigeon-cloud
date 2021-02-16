@@ -1,31 +1,32 @@
 package cn.yiidii.pigeon.auth.endpoint;
 
-import cn.hutool.core.util.StrUtil;
+import cn.yiidii.pigeon.auth.service.IThirdPartyService;
+import cn.yiidii.pigeon.auth.util.AuthRequestHelper;
 import cn.yiidii.pigeon.common.core.base.R;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.zhyd.oauth.model.AuthCallback;
+import me.zhyd.oauth.model.AuthResponse;
+import me.zhyd.oauth.model.AuthUser;
+import me.zhyd.oauth.request.AuthRequest;
+import me.zhyd.oauth.utils.AuthStateUtils;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.xnio.Result;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: YiiDii Wang
@@ -33,12 +34,14 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/oauth")
-@Api(tags = {"token接口"})
+@Api(tags = {"oauth接口"})
+@Slf4j
+@RequiredArgsConstructor
 public class OauthController {
 
-    @Autowired
-    private TokenEndpoint tokenEndpoint;
-
+    private final TokenEndpoint tokenEndpoint;
+    private final AuthRequestHelper authRequestHelper;
+    private final IThirdPartyService thirdPartyService;
 
     /**
      * 重写token接口
@@ -59,13 +62,13 @@ public class OauthController {
             @ApiImplicitParam(name = "password", value = "密码", required = false, paramType = "query", dataType = "String", defaultValue = "")
     })
     public R<OAuth2AccessToken> postAccessToken(Principal principal,
-                                                  @RequestParam String client_id,
-                                                  @RequestParam String client_secret,
-                                                  @RequestParam String grant_type,
-                                                  @RequestParam(required = false) String code,
-                                                  @RequestParam(required = false) String redirect_uri,
-                                                  @RequestParam(required = false) String username,
-                                                  @RequestParam(required = false) String password) throws HttpRequestMethodNotSupportedException {
+                                                @RequestParam String client_id,
+                                                @RequestParam String client_secret,
+                                                @RequestParam String grant_type,
+                                                @RequestParam(required = false) String code,
+                                                @RequestParam(required = false) String redirect_uri,
+                                                @RequestParam(required = false) String username,
+                                                @RequestParam(required = false) String password) throws HttpRequestMethodNotSupportedException {
         Map<String, String> params = new HashMap<>(16);
         params.put("client_id", client_id);
         params.put("client_secret", client_secret);
@@ -78,5 +81,36 @@ public class OauthController {
         return R.ok(accessToken);
     }
 
+    @GetMapping("/render/{source}")
+    @ApiOperation("第三方登录接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "source", value = "授权来源", required = true, paramType = "path", dataType = "String", defaultValue = "")
+    })
+    public void renderAuth(@PathVariable("source") String source, HttpServletResponse response) throws IOException {
+        AuthRequest authRequest = authRequestHelper.getAuthRequest(source);
+        String authorizeUrl = authRequest.authorize(AuthStateUtils.createState());
+        response.sendRedirect(authorizeUrl);
+    }
+
+
+    /**
+     * oauth平台中配置的授权回调地址
+     */
+    @RequestMapping("/callback/{source}")
+    @ApiIgnore
+    public ModelAndView login(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request) {
+        AuthRequest authRequest = authRequestHelper.getAuthRequest(source);
+        AuthResponse<AuthUser> response = authRequest.login(callback);
+
+        if (response.ok()) {
+            thirdPartyService.save(response.getData());
+            return new ModelAndView("redirect:/users");
+        }
+
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("errorMsg", response.getMsg());
+
+        return new ModelAndView("error", map);
+    }
 
 }
