@@ -27,4 +27,11 @@ public interface IUserService extends IService<User> {
      */
     UserDTO getUserDTOByUsername(String username);
 
+    /**
+     * 创建用户
+     * @param userDTO
+     * @return
+     */
+    User create(UserDTO userDTO);
+
 }
