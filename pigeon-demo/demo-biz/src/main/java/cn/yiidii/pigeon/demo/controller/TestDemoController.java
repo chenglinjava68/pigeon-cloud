@@ -4,6 +4,8 @@ import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.redis.RedisOps;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
+import cn.yiidii.pigeon.common.security.service.PigeonUser;
+import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import com.alibaba.fastjson.JSONObject;
@@ -110,6 +112,20 @@ public class TestDemoController {
         log.info("test user: " + JSONObject.toJSON(userDTOResp));
         return userDTOResp;
     }
+
+    @GetMapping("user/info")
+    @PreAuthorize("@pms.hasPermission('user')")
+    @ApiOperation(value = "获取当前用户信息", notes = "需要登陆，且需要[user]权限")
+    public R<UserDTO> info() {
+        Object principal = SecurityUtils.getAuthentication().getPrincipal();
+        log.info("principal: " + JSONObject.toJSON(principal));
+        PigeonUser user = SecurityUtils.getUser();
+        log.info("user: " + JSONObject.toJSON(user));
+        R<UserDTO> userDTOByUsername = userFeign.getUserDTOByUsername(principal.toString());
+        log.info("userDTOByUsername: " + JSONObject.toJSON(userDTOByUsername));
+        return userDTOByUsername;
+    }
+
 
 
 }
