@@ -14,6 +14,7 @@
         <module>pigeon-demo</module>
         <module>pigeon-rbac</module>
         <module>pigeon-gateway</module>
+        <module>pigeon-governance</module>
     </modules>
 
     <properties>
