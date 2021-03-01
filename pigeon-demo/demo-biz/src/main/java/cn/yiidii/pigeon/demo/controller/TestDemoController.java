@@ -1,14 +1,21 @@
 package cn.yiidii.pigeon.demo.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.redis.RedisOps;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
 import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
+import cn.yiidii.pigeon.demo.api.entity.Demo;
+import cn.yiidii.pigeon.demo.mapper.DemoMapper;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import com.alibaba.fastjson.JSONObject;
+import io.seata.core.context.RootContext;
+import io.seata.core.exception.TransactionException;
+import io.seata.spring.annotation.GlobalTransactional;
+import io.seata.tm.api.GlobalTransactionContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,10 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author: YiiDii Wang
@@ -38,6 +48,8 @@ public class TestDemoController {
     private final RedisOps redisOps;
 
     private final Environment env;
+
+    private final DemoMapper demoMapper;
 
     @GetMapping("/test/hello")
     @ApiOperation(value = "测试hello接口")
@@ -126,6 +138,83 @@ public class TestDemoController {
         return userDTOByUsername;
     }
 
+    @GetMapping("/test/createDemo0")
+    @ApiOperation(value = "新增demo0", notes = "Transactional 正常插入")
+    @Transactional
+    public R createDemo0() {
+        Demo demo = new Demo("name", "tom");
+        demo.setCreateTime(LocalDateTime.now());
+        demo.setCreatedBy(114130L);
+        int insert = demoMapper.insert(demo);
+        if (insert > 0) {
+            log.info("demo数据插入成功");
+        }
+        return R.ok();
+    }
 
+    @GetMapping("/test/createDemo1")
+    @ApiOperation(value = "新增demo1", notes = "Transactional 插入成功，但异常回滚")
+    @Transactional
+    public R createDemo1() {
+        Demo demo = new Demo("name", "tom");
+        demo.setCreateTime(LocalDateTime.now());
+        demo.setCreatedBy(114130L);
+        int insert = demoMapper.insert(demo);
+        if (insert > 0) {
+            log.info("demo数据插入成功");
+        }
+        int a = 1 / 0;
+        return R.ok();
+    }
+
+    @GetMapping("/test/createDemo2")
+    @ApiOperation(value = "新增demo2", notes = "GlobalTransactional 插入成功，但异常回滚")
+    @GlobalTransactional
+    public R createDemo2() {
+        Demo demo = new Demo("name", "tom");
+        demo.setCreateTime(LocalDateTime.now());
+        demo.setCreatedBy(114130L);
+        int insert = demoMapper.insert(demo);
+        if (insert > 0) {
+            log.info("demo数据插入成功");
+        }
+        int a = 1 / 0;
+        return R.ok();
+    }
+
+    @SneakyThrows
+    @GetMapping("/test/seata")
+    @ApiOperation(value = "测试seata", notes = "先本地插入数据，再调用rbac服务插入数据")
+    @GlobalTransactional(rollbackFor = Exception.class)
+    public R seata() {
+
+        log.info("当前 XID: {}", RootContext.getXID());
+
+        // 插入demo数据是会成功的
+        Demo demo = new Demo("name", "tom");
+        demo.setCreateTime(LocalDateTime.now());
+        demo.setCreatedBy(114130L);
+        int insert = demoMapper.insert(demo);
+        if (insert > 0) {
+            log.info("demo数据插入成功");
+        }
+
+        // wangyidi用户已存在，会抛出异常
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(String.valueOf(new Random().nextInt()));
+        userDTO.setPassword("11");
+        R<UserDTO> userDTOR = userFeign.create(userDTO);
+        log.info("userDTOR: {}", JSONObject.toJSON(userDTOR));
+        if (userDTOR.getCode() != 0) {
+            /*
+             在controller层做统一的全局异常处理，封装提示信息响应到前端，通过@ControllerAdvice注解实现，可以区分同步的异常进行拦截从而产生不同的响应。
+             有一点需要注意，当全局事物A调用分支事物B和C通过http，且B和C都有全局异常拦截，那么A就需要判断接收到的响应码显示的抛出异常实现全局事物的正常回滚。
+             */
+            GlobalTransactionContext.reload(RootContext.getXID()).rollback();
+        }
+
+        int a = 1 / 0;
+        return R.ok();
+    }
 
 }
