@@ -52,14 +52,10 @@ public class UserController {
     @GetMapping("user/info")
     @PreAuthorize("@pms.hasPermission('user')")
     @ApiOperation(value = "获取当前用户信息", notes = "需要登陆，且需要[user]权限")
-    public R<User> info() {
+    public R<UserDTO> info() {
         Object principal = SecurityUtils.getAuthentication().getPrincipal();
-        log.info("principal: " + JSONObject.toJSON(principal));
-        PigeonUser user = SecurityUtils.getUser();
-        log.info("user: " + JSONObject.toJSON(user));
-        User userByUsername = userService.getUserByUsername(principal.toString());
-        log.info("userByUsername: " + JSONObject.toJSON(userByUsername));
-        return R.ok(userByUsername);
+        UserDTO userDTO = userService.getUserDTOByUsername(principal.toString());
+        return R.ok(userDTO);
     }
 
 }
