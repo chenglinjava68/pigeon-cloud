@@ -26,9 +26,35 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class Resource extends Entity<Long> {
 
+    @ApiModelProperty(value = "菜单标题")
+    private String name;
+
     @ApiModelProperty(value = "资源code")
-    @NotEmpty(message = "资源code不能为空")
     @TableField(value = "code")
     private String code;
+
+    @ApiModelProperty(value = "路径")
+    private String path;
+
+    @ApiModelProperty(value = "父菜单ID")
+    private Long parentId;
+
+    @ApiModelProperty(value = "菜单图标")
+    private String icon;
+
+    @ApiModelProperty(value = "排序值")
+    private Integer sort;
+
+    @ApiModelProperty(value = "是否缓存该页面: 1:是  0:不是")
+    private String keepAlive;
+
+    @ApiModelProperty(value = "重定向")
+    private String redirect;
+
+    @ApiModelProperty(value = "是否隐藏")
+    private String hidden;
+
+    @ApiModelProperty(value = "是否外链")
+    private String target;
 
 }
