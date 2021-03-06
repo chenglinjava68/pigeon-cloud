@@ -35,8 +35,7 @@ public class Role extends Entity<Long> {
 
     @ApiModelProperty(value = "描述")
     @NotEmpty(message = "描述不能为空")
-    @TableField(value = "desc")
+    @TableField(value = "`desc`")
     private String desc;
 
-    private Integer state;
 }

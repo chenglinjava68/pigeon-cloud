@@ -1,8 +1,10 @@
 package cn.yiidii.pigeon.rbac.service;
 
-
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * 资源服务接口
@@ -11,4 +13,20 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @create: 2021-01-13 22:00
  */
 public interface IResourceService extends IService<Resource> {
+
+    /**
+     * 通过用户ID获取资源
+     *
+     * @param uid
+     * @return
+     */
+    Set<Resource> getResourceByUid(Long uid);
+
+    /**
+     * 通过角色id集合获取资源
+     * @param roleIdCollection
+     * @return
+     */
+    Set<Resource> getResourceByRids(Collection<Long> roleIdCollection);
+
 }

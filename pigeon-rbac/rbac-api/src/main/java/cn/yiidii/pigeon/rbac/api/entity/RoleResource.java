@@ -1,6 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.entity;
 
-import cn.yiidii.pigeon.common.core.base.entity.Entity;
+import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -24,7 +24,7 @@ import javax.validation.constraints.NotEmpty;
 @TableName("role_resource")
 @ApiModel(value = "RoleResource", description = "角色资源")
 @AllArgsConstructor
-public class RoleResource extends Entity<Long> {
+public class RoleResource extends SuperEntity<Long> {
 
     @ApiModelProperty(value = "角色ID")
     @NotEmpty(message = "角色ID不能为空")
