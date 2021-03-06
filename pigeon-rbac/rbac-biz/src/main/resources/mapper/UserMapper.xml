@@ -31,8 +31,6 @@
             <id column="rid" property="id"/>
             <result column="rname" property="name"/>
             <result column="rdesc" property="desc"/>
-            <result column="state" property="state"/>
-        </collection>
         <collection property="resources" ofType="cn.yiidii.pigeon.rbac.api.dto.ResourceDTO">
             <id column="resid" property="id"/>
             <result column="code" property="code"/>
@@ -42,7 +40,7 @@
     <select id="getUserDTOByUsername" resultMap="UserDTOResultMap" resultType="cn.yiidii.pigeon.rbac.api.dto.UserDTO">
         SELECT
             u.*,
-            r.id rid, r.name rname, r.desc rdesc, r.state,
+            r.id rid, r.name rname, r.desc rdesc,
             res.id resid, res.code
 		FROM
 			user u
