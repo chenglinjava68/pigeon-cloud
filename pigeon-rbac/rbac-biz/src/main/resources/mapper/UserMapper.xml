@@ -31,6 +31,7 @@
             <id column="rid" property="id"/>
             <result column="rname" property="name"/>
             <result column="rdesc" property="desc"/>
+        </collection>
         <collection property="resources" ofType="cn.yiidii.pigeon.rbac.api.dto.ResourceDTO">
             <id column="resid" property="id"/>
             <result column="code" property="code"/>

@@ -49,7 +49,7 @@ public class UserController {
         return R.ok(userDTO);
     }
 
-    @GetMapping("user/info")
+    @GetMapping("/info")
     @PreAuthorize("@pms.hasPermission('user')")
     @ApiOperation(value = "获取当前用户信息", notes = "需要登陆，且需要[user]权限")
     public R<UserDTO> info() {
