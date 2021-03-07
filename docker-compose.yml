@@ -36,3 +36,12 @@ services:
       - 1150:1150
     container_name: pigeon-demo
     hostname: pigeon-demo
+
+  pigeon-openapi:
+    build:
+      context: ./pigeon-openapi
+    restart: always
+    ports:
+      - 1143:1143
+    container_name: pigeon-openapi
+    hostname: pigeon-openapi
