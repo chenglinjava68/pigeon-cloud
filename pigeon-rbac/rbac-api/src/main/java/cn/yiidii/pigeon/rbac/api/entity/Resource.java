@@ -1,14 +1,12 @@
 package cn.yiidii.pigeon.rbac.api.entity;
 
-import cn.yiidii.pigeon.common.core.base.entity.Entity;
+import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotEmpty;
 
 /**
  * 资源
@@ -24,10 +22,7 @@ import javax.validation.constraints.NotEmpty;
 @TableName("resource")
 @ApiModel(value = "Resource", description = "资源")
 @AllArgsConstructor
-public class Resource extends Entity<Long> {
-
-    @ApiModelProperty(value = "菜单标题")
-    private String name;
+public class Resource extends TreeEntity<Resource, Long> {
 
     @ApiModelProperty(value = "资源code")
     @TableField(value = "code")
@@ -36,14 +31,11 @@ public class Resource extends Entity<Long> {
     @ApiModelProperty(value = "路径")
     private String path;
 
-    @ApiModelProperty(value = "父菜单ID")
-    private Long parentId;
+    @ApiModelProperty(value = "组件")
+    private String component;
 
     @ApiModelProperty(value = "菜单图标")
     private String icon;
-
-    @ApiModelProperty(value = "排序值")
-    private Integer sort;
 
     @ApiModelProperty(value = "是否缓存该页面: 1:是  0:不是")
     private String keepAlive;
