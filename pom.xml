@@ -15,6 +15,7 @@
         <module>pigeon-rbac</module>
         <module>pigeon-gateway</module>
         <module>pigeon-governance</module>
+        <module>pigeon-openapi</module>
     </modules>
 
     <properties>
