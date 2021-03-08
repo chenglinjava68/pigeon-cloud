@@ -27,6 +27,20 @@
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="password" property="mobile"/>
+        <result column="password" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="desc" property="desc"/>
+        <result column="pwd_err_times" property="pwdErrTimes"/>
+        <result column="last_pwd_err_time" property="lastPwdErrTime"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="updated_by" property="updatedBy"/>
         <collection property="roles" ofType="cn.yiidii.pigeon.rbac.api.dto.RoleDTO">
             <id column="rid" property="id"/>
             <result column="rname" property="name"/>
