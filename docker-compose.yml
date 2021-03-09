@@ -45,3 +45,12 @@ services:
       - 1143:1143
     container_name: pigeon-openapi
     hostname: pigeon-openapi
+
+  pigeon-file:
+    build:
+      context: ./pigeon-file/file-biz
+    restart: always
+    ports:
+      - 1144:1144
+    container_name: pigeon-file
+    hostname: pigeon-file
