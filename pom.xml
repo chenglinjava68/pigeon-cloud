@@ -16,6 +16,7 @@
         <module>pigeon-gateway</module>
         <module>pigeon-governance</module>
         <module>pigeon-openapi</module>
+        <module>pigeon-file</module>
     </modules>
 
     <properties>
