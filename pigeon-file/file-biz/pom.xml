@@ -16,11 +16,11 @@
     </properties>
 
     <dependencies>
-      <dependency>
-        <groupId>cn.yiidii.pigeon</groupId>
-        <artifactId>file-api</artifactId>
-        <version>1.0.0</version>
-      </dependency>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>file-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
             <artifactId>pigeon-security</artifactId>
@@ -89,5 +89,21 @@
             <artifactId>aws-java-sdk-s3</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
