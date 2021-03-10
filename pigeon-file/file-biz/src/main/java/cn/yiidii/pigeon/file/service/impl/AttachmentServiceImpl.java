@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 /**
  *
@@ -22,11 +25,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements IAttachmentService {
 
     private final FileStrategy fileStrategy;
+    private final AttachmentMapper attachmentMapper;
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Attachment upload(MultipartFile multipartFile) {
-        return fileStrategy.upload(multipartFile);
+        Attachment attachment = fileStrategy.upload(multipartFile);
+        attachment.setCreateTime(LocalDateTime.now());
+        attachment.setUpdateTime(LocalDateTime.now());
+        attachmentMapper.insert(attachment);
+        return attachment;
     }
 
 }
