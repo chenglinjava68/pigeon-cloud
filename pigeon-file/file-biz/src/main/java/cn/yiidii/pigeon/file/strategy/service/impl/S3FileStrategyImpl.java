@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.util.UUID;
 
 /**
  * S3
@@ -33,21 +32,20 @@ public class S3FileStrategyImpl extends AbstractFileStrategy {
     }
 
     @Override
-    protected void uploadFile(Attachment file, MultipartFile multipartFile) throws Exception {
+    protected void practicalUploadFile(Attachment file, MultipartFile multipartFile) throws Exception {
         AmazonS3 client = getClient();
         String bucketName = fileProperties.getBucketName();
         if (!client.doesBucketExistV2(bucketName)) {
             client.createBucket(bucketName);
         }
 
-        String objectName = UUID.randomUUID().toString();
-        file.setFilename(objectName);
         byte[] bytes = IOUtils.toByteArray(multipartFile.getInputStream());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        client.putObject(bucketName, objectName, byteArrayInputStream, objectMetadata);
+        client.putObject(bucketName, file.getUrl(), byteArrayInputStream, objectMetadata);
+        client.shutdown();
     }
 
     @Override
