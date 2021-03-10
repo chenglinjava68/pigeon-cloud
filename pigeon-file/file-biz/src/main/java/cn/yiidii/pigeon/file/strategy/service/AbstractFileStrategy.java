@@ -1,5 +1,8 @@
 package cn.yiidii.pigeon.file.strategy.service;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
@@ -8,6 +11,8 @@ import cn.yiidii.pigeon.file.strategy.FileStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 
 /**
@@ -35,11 +40,16 @@ public abstract class AbstractFileStrategy implements FileStrategy {
             if (!StrUtil.contains(multipartFile.getOriginalFilename(), FILE_SPLIT)) {
                 throw new BizException("缺少后缀名");
             }
-
+            // url: /date/id-name.suffix
+            String originalFilename = multipartFile.getOriginalFilename();
+            String url =  LocalDateTimeUtil.formatNormal(LocalDate.now()).concat("/").concat(IdUtil.simpleUUID()).concat("-").concat(originalFilename);
             Attachment file = Attachment.builder()
+                    .url(url)
+                    .filename(originalFilename)
+                    .suffix(FileUtil.getSuffix(originalFilename))
                     .size(multipartFile.getSize())
                     .build();
-            uploadFile(file, multipartFile);
+            practicalUploadFile(file, multipartFile);
             return file;
         } catch (Exception e) {
             log.error("ex=", e);
@@ -54,11 +64,12 @@ public abstract class AbstractFileStrategy implements FileStrategy {
      * @param multipartFile 文件
      * @throws Exception 异常
      */
-    protected abstract void uploadFile(Attachment file, MultipartFile multipartFile) throws Exception;
+    protected abstract void practicalUploadFile(Attachment file, MultipartFile multipartFile) throws Exception;
 
 
     /**
      * 删除文件
+     *
      * @param bucketName
      * @param objectName
      * @return
