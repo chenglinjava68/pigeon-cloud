@@ -53,7 +53,7 @@ public class Attachment extends Entity<Long> {
      */
     @ApiModelProperty(value = "后缀")
     @Length(max = 64, message = "后缀长度不能超过64")
-    @TableField(value = "ext", condition = LIKE)
+    @TableField(value = "suffix", condition = LIKE)
     private String suffix;
 
     /**
