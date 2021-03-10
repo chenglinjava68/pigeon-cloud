@@ -28,6 +28,11 @@ public class OssProperties implements Serializable {
     private String endpoint;
 
     /**
+     * 自定义域名
+     */
+    private String customDomain;
+
+    /**
      * 默认的存储桶名称
      */
     private String bucketName = "pigeon";
