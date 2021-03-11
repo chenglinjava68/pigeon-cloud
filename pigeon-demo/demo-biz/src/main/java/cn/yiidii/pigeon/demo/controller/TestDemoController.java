@@ -1,10 +1,10 @@
 package cn.yiidii.pigeon.demo.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
-import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.redis.RedisOps;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
+import cn.yiidii.pigeon.common.mail.core.MailTemplate;
 import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.demo.api.entity.Demo;
@@ -13,20 +13,22 @@ import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import com.alibaba.fastjson.JSONObject;
 import io.seata.core.context.RootContext;
-import io.seata.core.exception.TransactionException;
 import io.seata.spring.annotation.GlobalTransactional;
 import io.seata.tm.api.GlobalTransactionContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -50,6 +52,8 @@ public class TestDemoController {
     private final Environment env;
 
     private final DemoMapper demoMapper;
+
+    private final MailTemplate mailTemplate;
 
     @GetMapping("/test/hello")
     @ApiOperation(value = "测试hello接口")
@@ -215,6 +219,13 @@ public class TestDemoController {
 
         int a = 1 / 0;
         return R.ok();
+    }
+
+    @GetMapping("/test/mail")
+    @ApiOperation(value = "测试邮件发送")
+    public R<String> mail(@RequestParam String mail) {
+        mailTemplate.sendMail("主题", "内容", new String[]{mail}, null, null, null);
+        return R.ok(null, "邮件发送成功");
     }
 
 }
