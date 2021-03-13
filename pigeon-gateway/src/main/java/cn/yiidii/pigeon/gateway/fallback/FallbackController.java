@@ -20,6 +20,6 @@ public class FallbackController {
     @RequestMapping("/fallback")
     public Mono<R> fallback() {
         log.info("fallback");
-        return Mono.just(R.failed(ExceptionCode.SYSTEM_TIMEOUT));
+        return Mono.just(R.failed(ExceptionCode.SYSTEM_TIMEOUT.getMsg()));
     }
 }
