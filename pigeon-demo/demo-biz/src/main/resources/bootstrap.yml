@@ -15,6 +15,8 @@ spring:
             refresh: true
           - dataId: redis.yml
             refresh: false
+          - dataId: rabbitmq.yml
+            refresh: false
         namespace: 0f3a40b9-e065-4e5b-9d87-d7d16c85f107
         enabled: true
         username: nacos
