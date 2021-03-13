@@ -40,6 +40,11 @@
             <artifactId>pigeon-mail</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-rabbit</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
 
         <dependency>

@@ -7,8 +7,10 @@ import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
 import cn.yiidii.pigeon.common.mail.core.MailTemplate;
 import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
+import cn.yiidii.pigeon.demo.api.dto.EmailDTO;
 import cn.yiidii.pigeon.demo.api.entity.Demo;
 import cn.yiidii.pigeon.demo.mapper.DemoMapper;
+import cn.yiidii.pigeon.demo.message.producer.IMailProducer;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import com.alibaba.fastjson.JSONObject;
@@ -25,11 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +54,8 @@ public class TestDemoController {
     private final DemoMapper demoMapper;
 
     private final MailTemplate mailTemplate;
+
+    private final IMailProducer mailProducer;
 
     @GetMapping("/test/hello")
     @ApiOperation(value = "测试hello接口")
@@ -226,6 +228,13 @@ public class TestDemoController {
     public R<String> mail(@RequestParam String mail) {
         mailTemplate.sendMail("主题", "内容", new String[]{mail}, null, null, null);
         return R.ok(null, "邮件发送成功");
+    }
+
+    @PostMapping("/test/rabbit")
+    @ApiOperation(value = "测试RabbitMQ消息")
+    public R<String> rabbit(@RequestBody EmailDTO emailDTO) {
+        mailProducer.testSendEmail(emailDTO);
+        return R.ok(null, "发送消息成功");
     }
 
 }
