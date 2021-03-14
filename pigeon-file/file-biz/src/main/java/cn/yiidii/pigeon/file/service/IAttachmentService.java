@@ -1,6 +1,8 @@
 package cn.yiidii.pigeon.file.service;
 
+import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,5 +23,12 @@ public interface IAttachmentService extends IService<Attachment> {
      * @return 附件
      */
     Attachment upload(MultipartFile file);
+
+    /**
+     * 文件列表
+     * @param searchParam
+     * @return
+     */
+    IPage<Attachment> list(BaseSearchParam searchParam);
 
 }

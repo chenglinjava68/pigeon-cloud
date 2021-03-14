@@ -1,10 +1,13 @@
 package cn.yiidii.pigeon.file.controller;
 
+import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.constant.StringPool;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
 import cn.yiidii.pigeon.file.properties.OssProperties;
 import cn.yiidii.pigeon.file.service.IAttachmentService;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -39,12 +42,14 @@ public class FileController {
 
     @GetMapping("/list")
     @ApiOperation(value = "文件列表")
-    public R attachment() {
-        List<Attachment> attachmentList = attachmentService.lambdaQuery().list();
-        JSONObject jo = new JSONObject();
-        jo.put("customDomain", ossProperties.getCustomDomain());
-        jo.put("record", attachmentList);
-        return R.ok(jo);
+    public R attachment(BaseSearchParam searchParam) {
+        IPage<Attachment> pageData = attachmentService.list(searchParam);
+        List<Attachment> records = pageData.getRecords();
+        String customDomain = ossProperties.getCustomDomain();
+        records.forEach(record->{
+            record.setUrl(customDomain + StringPool.SLASH + record.getUrl());
+        });
+        return R.ok(pageData);
     }
 
 }
