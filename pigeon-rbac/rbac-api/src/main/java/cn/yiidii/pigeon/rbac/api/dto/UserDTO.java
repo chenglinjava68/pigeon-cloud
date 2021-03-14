@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -14,6 +15,10 @@ import java.util.List;
 @Data
 @ApiModel("用户DTO")
 public class UserDTO extends User {
+
+    @ApiModelProperty(value = "确认密码")
+    @NotBlank(message = "确认密码不能为空",groups = {Update.class})
+    private String confirmPassword;
 
     @ApiModelProperty(value = "角色")
     private List<RoleDTO> roles;
