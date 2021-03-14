@@ -1,13 +1,18 @@
 package cn.yiidii.pigeon.rbac.service.impl;
 
+import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.exception.BizException;
-import cn.yiidii.pigeon.rbac.api.entity.User;
-import cn.yiidii.pigeon.rbac.service.IUserService;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
+import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
+import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +55,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setUpdateTime(LocalDateTime.now());
         this.save(user);
         return this.getUserByUsername(username);
+    }
+
+    @Override
+    public IPage<User> list(BaseSearchParam searchParam) {
+        LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), User::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
+        boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
+        queryWrapper.like(isKeyword, User::getName, searchParam.getKeyword()).or(isKeyword)
+                .like(isKeyword, User::getId, searchParam.getKeyword());
+
+        // 根据排序字段进行排序
+        if (StringUtils.isNotBlank(searchParam.getOrderBy())) {
+        }
+
+        // 分页查询
+        Page<User> page = new Page<>(searchParam.getCurrent(), searchParam.getSize());
+        IPage<User> sysUserPage = this.baseMapper.selectPage(page, queryWrapper);
+        return sysUserPage;
     }
 }
