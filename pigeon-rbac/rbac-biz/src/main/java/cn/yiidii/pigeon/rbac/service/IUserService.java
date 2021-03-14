@@ -38,7 +38,7 @@ public interface IUserService extends IService<User> {
 
     /**
      * 用户列表
-     * @param userDTO
+     * @param searchParam
      * @return
      */
     IPage<User> list(BaseSearchParam searchParam);

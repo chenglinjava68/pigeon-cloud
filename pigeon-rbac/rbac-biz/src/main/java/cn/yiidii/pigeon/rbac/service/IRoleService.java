@@ -1,7 +1,11 @@
 package cn.yiidii.pigeon.rbac.service;
 
 
+import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
+import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
+import cn.yiidii.pigeon.rbac.api.entity.User;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -20,5 +24,14 @@ public interface IRoleService extends IService<Role> {
      * @return
      */
     List<Role> getRoleListByUid(Long uid);
+
+    /**
+     * 创建角色
+     * @param roleDTO
+     * @return
+     */
+    int create(RoleDTO roleDTO);
+
+    IPage<Role> list(BaseSearchParam searchParam);
 
 }
