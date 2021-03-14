@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 /**
  * 角色
@@ -26,6 +27,12 @@ import javax.validation.constraints.NotEmpty;
 @TableName("role")
 @ApiModel(value = "Role", description = "角色")
 public class Role extends Entity<Long> {
+
+    @ApiModelProperty(value = "用户编码")
+    @NotEmpty(message = "用户编码不能为空")
+    @TableField(value="code")
+    @Pattern(regexp = "\\w{3,20}", message = "角色编码限制3-20位，数字字母及下划线")
+    private String code;
 
     @ApiModelProperty(value = "名称")
     @NotEmpty(message = "名称不能为空")
