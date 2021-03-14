@@ -26,9 +26,4 @@ public class UserDTO extends User {
     @ApiModelProperty(value = "资源")
     private List<ResourceDTO> resources;
 
-    private UserDTO transUserToUserDTO() {
-
-        return null;
-    }
-
 }
