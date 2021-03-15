@@ -4,7 +4,6 @@ package cn.yiidii.pigeon.rbac.service;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
-import cn.yiidii.pigeon.rbac.api.entity.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -32,6 +31,11 @@ public interface IRoleService extends IService<Role> {
      */
     int create(RoleDTO roleDTO);
 
+    /**
+     * 角色列表
+     * @param searchParam
+     * @return
+     */
     IPage<Role> list(BaseSearchParam searchParam);
 
 }
