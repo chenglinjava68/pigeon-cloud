@@ -1,9 +1,14 @@
 package cn.yiidii.pigeon.rbac.service.impl;
 
+import ch.qos.logback.core.pattern.ConverterUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.Convert;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.exception.BizException;
+import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
 import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -30,6 +35,7 @@ import java.util.Objects;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     private final UserMapper userMapper;
+    private final DozerUtils dozerUtils;
 
     @Override
     public User getUserByUsername(String username) {
@@ -58,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public IPage<User> list(BaseSearchParam searchParam) {
+    public IPage<UserVO> list(BaseSearchParam searchParam) {
         LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), User::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
@@ -71,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 分页查询
         Page<User> page = new Page<>(searchParam.getCurrent(), searchParam.getSize());
-        IPage<User> sysUserPage = this.baseMapper.selectPage(page, queryWrapper);
-        return sysUserPage;
+        IPage<User> userPage = this.baseMapper.selectPage(page, queryWrapper);
+        return userPage.convert(user -> BeanUtil.copyProperties(user, UserVO.class));
     }
 }

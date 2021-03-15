@@ -6,6 +6,7 @@ import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -63,7 +64,7 @@ public class UserController {
     @GetMapping("/list")
     @PreAuthorize("@pms.hasPermission('user')")
     @ApiOperation(value = "用户列表", notes = "需要登陆，且需要[user]权限")
-    public R<IPage<User>> list(BaseSearchParam searchParam) {
+    public R<IPage<UserVO>> list(BaseSearchParam searchParam) {
         return R.ok(userService.list(searchParam));
     }
 
