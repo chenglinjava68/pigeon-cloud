@@ -41,8 +41,7 @@ public class ResourceController {
         return R.ok(TreeUtil.buildTree(treeList));
     }
 
-    @GetMapping
-    @RequestMapping("tree")
+    @GetMapping("tree")
     @ApiOperation(value = "所有菜单树")
     public R allTree(){
         List<Resource> allResource = resourceService.lambdaQuery().list();
