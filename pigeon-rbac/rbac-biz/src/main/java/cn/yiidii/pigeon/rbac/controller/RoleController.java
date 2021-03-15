@@ -8,6 +8,8 @@ import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
+import cn.yiidii.pigeon.rbac.service.IResourceService;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
 
 /**
  * 角色
@@ -50,6 +53,12 @@ public class RoleController {
     @ApiOperation(value = "角色列表")
     public R<IPage<Role>> list(BaseSearchParam searchParam) {
         return R.ok(roleService.list(searchParam));
+    }
+
+    @GetMapping("/resource")
+    @ApiOperation(value = "角色菜单")
+    public R<Collection<VueRouter>> resource() {
+        return R.ok(roleService.router());
     }
 
 }
