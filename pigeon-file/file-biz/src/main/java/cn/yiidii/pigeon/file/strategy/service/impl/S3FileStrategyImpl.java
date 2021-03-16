@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.file.strategy.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
 import cn.yiidii.pigeon.file.properties.OssProperties;
 import cn.yiidii.pigeon.file.strategy.service.AbstractFileStrategy;
@@ -50,8 +51,8 @@ public class S3FileStrategyImpl extends AbstractFileStrategy {
 
     @Override
     public boolean delete(String bucketName, String objectName) {
-        log.warn("模拟删除成功");
-        return false;
+        log.warn(StrUtil.format("模拟删除[{}}]的[{}]成功", bucketName, objectName));
+        return true;
     }
 
     private AmazonS3 getClient() {
