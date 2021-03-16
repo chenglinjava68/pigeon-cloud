@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
 import static com.baomidou.mybatisplus.annotation.SqlCondition.LIKE;
@@ -19,7 +20,7 @@ import static com.baomidou.mybatisplus.annotation.SqlCondition.LIKE;
  * @date 2021/3/9 23:14:44
  */
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
