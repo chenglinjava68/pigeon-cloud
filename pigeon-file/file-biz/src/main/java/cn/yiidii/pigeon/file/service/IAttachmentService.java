@@ -19,16 +19,24 @@ public interface IAttachmentService extends IService<Attachment> {
     /**
      * 上传附件
      *
-     * @param file     文件
+     * @param file 文件
      * @return 附件
      */
     Attachment upload(MultipartFile file);
 
     /**
      * 文件列表
+     *
      * @param searchParam
      * @return
      */
     IPage<Attachment> list(BaseSearchParam searchParam);
+
+    /**
+     * 删除附件
+     * @param id                    附件ID
+     * @param isDeleteInBucket      是否删除桶的图片
+     */
+    void delete(Long id, boolean isDeleteInBucket);
 
 }

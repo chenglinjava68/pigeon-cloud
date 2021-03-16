@@ -1,8 +1,10 @@
 package cn.yiidii.pigeon.file.service.impl;
 
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
+import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
 import cn.yiidii.pigeon.file.mapper.AttachmentMapper;
+import cn.yiidii.pigeon.file.properties.OssProperties;
 import cn.yiidii.pigeon.file.service.IAttachmentService;
 import cn.yiidii.pigeon.file.strategy.FileStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -20,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 
 /**
- *
- *
  * @author YiiDii Wang
  * @date 2021/3/9 23:22:01
  */
@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements IAttachmentService {
 
     private final FileStrategy fileStrategy;
+    private final OssProperties ossProperties;
     private final AttachmentMapper attachmentMapper;
 
 
@@ -51,6 +52,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
         queryWrapper.like(isKeyword, Attachment::getFilename, searchParam.getKeyword()).or(isKeyword)
                 .like(isKeyword, Attachment::getId, searchParam.getKeyword());
+        queryWrapper.eq(Attachment::getStatus, 0);
 
         // 根据排序字段进行排序
         if (StringUtils.isNotBlank(searchParam.getOrderBy())) {
@@ -59,6 +61,22 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         // 分页查询
         Page<Attachment> page = new Page<>(searchParam.getCurrent(), searchParam.getSize());
         return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id, boolean isDeleteInBucket) {
+        Attachment attachment = Attachment.builder().id(id).status(20).updateTime(LocalDateTime.now()).build();
+        int row = this.baseMapper.updateById(attachment);
+        if (1 != row) {
+            throw new BizException("文件不存在");
+        }
+        if (isDeleteInBucket) {
+            boolean delete = fileStrategy.delete(ossProperties.getBucketName(), attachment.getUrl());
+            if(!delete){
+                throw new BizException("删除桶文件失败");
+            }
+        }
     }
 
 }

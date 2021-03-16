@@ -28,7 +28,7 @@ import java.util.List;
 @RequestMapping("attachment")
 @Api(tags = "文件接口")
 @RequiredArgsConstructor
-public class FileController {
+public class AttachmentController {
 
     private final IAttachmentService attachmentService;
     private final OssProperties ossProperties;
@@ -46,10 +46,16 @@ public class FileController {
         IPage<Attachment> pageData = attachmentService.list(searchParam);
         List<Attachment> records = pageData.getRecords();
         String customDomain = ossProperties.getCustomDomain();
-        records.forEach(record->{
+        records.forEach(record -> {
             record.setUrl(customDomain + StringPool.SLASH + record.getUrl());
         });
         return R.ok(pageData);
     }
 
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "刪除文件")
+    public R attachment(@PathVariable Long id, @RequestParam boolean isDeleteInBucket) {
+        attachmentService.delete(id, isDeleteInBucket);
+        return R.ok(null, "删除成功");
+    }
 }
