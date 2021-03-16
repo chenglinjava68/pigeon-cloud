@@ -1,8 +1,10 @@
 package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
+import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,12 +28,13 @@ import java.util.List;
 public class ResourceController {
 
     private final IResourceService resourceService;
+    private final DozerUtils dozerUtils;
 
     @GetMapping("tree")
     @ApiOperation(value = "所有菜单树")
     public R allTree(){
         List<Resource> allResource = resourceService.lambdaQuery().list();
-        return R.ok(TreeUtil.buildTree(allResource));
+        return R.ok(TreeUtil.buildTree(dozerUtils.mapList(allResource, VueRouter.class)));
     }
 
 }
