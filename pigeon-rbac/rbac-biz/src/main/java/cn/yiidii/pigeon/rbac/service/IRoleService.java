@@ -48,5 +48,5 @@ public interface IRoleService extends IService<Role> {
      *
      * @return
      */
-    Collection<VueRouter> router();
+    List<VueRouter> getRouter();
 }

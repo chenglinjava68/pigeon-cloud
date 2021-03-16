@@ -5,31 +5,27 @@ import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
-import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
-import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.entity.UserRole;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
-import cn.yiidii.pigeon.rbac.mapper.RoleResourceMapper;
-import cn.yiidii.pigeon.rbac.service.*;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
+import cn.yiidii.pigeon.rbac.service.IResourceService;
+import cn.yiidii.pigeon.rbac.service.IRoleService;
+import cn.yiidii.pigeon.rbac.service.IUserRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -46,7 +42,7 @@ import java.util.stream.Collectors;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
     private final IUserRoleService userRoleService;
-//    private final IResourceService resourceService;
+    private final IResourceService resourceService;
     private final DozerUtils dozerUtils;
 
     @Override
@@ -91,11 +87,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public Collection<VueRouter> router() {
-//        Set<Long> ridSet = this.getRoleListByUid(SecurityUtils.getUser().getId()).stream().map(Role::getId).collect(Collectors.toSet());
-//        Set<Resource> roleResourceList = resourceService.getResourceByRids(ridSet);
-//        List<VueRouter> treeList = dozerUtils.mapList(roleResourceList, VueRouter.class);
-//        return TreeUtil.buildTree(treeList);
-        return null;
+    public List<VueRouter> getRouter() {
+        Set<Long> ridSet = this.getRoleListByUid(SecurityUtils.getUser().getId()).stream().map(Role::getId).collect(Collectors.toSet());
+        Set<Resource> roleResourceList = resourceService.getResourceByRids(ridSet);
+        List<VueRouter> treeList = dozerUtils.mapList(roleResourceList, VueRouter.class);
+        return TreeUtil.buildTree(treeList);
     }
 }

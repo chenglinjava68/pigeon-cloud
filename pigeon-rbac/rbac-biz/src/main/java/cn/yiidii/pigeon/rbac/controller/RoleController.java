@@ -3,28 +3,20 @@ package cn.yiidii.pigeon.rbac.controller;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
-import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
-import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
-import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
-import cn.yiidii.pigeon.rbac.service.IResourceService;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
-import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * 角色
@@ -41,7 +33,7 @@ public class RoleController {
 
     private final IRoleService roleService;
 
-    @PostMapping("/create")
+    @PostMapping
     @ApiOperation(value = "创建角色")
     public R create(@Validated(value = {Add.class}) @RequestBody RoleDTO roleDTO) {
         int row = roleService.create(roleDTO);
@@ -55,10 +47,10 @@ public class RoleController {
         return R.ok(roleService.list(searchParam));
     }
 
-    @GetMapping("/resource")
+    @GetMapping("/router")
     @ApiOperation(value = "角色菜单")
-    public R<Collection<VueRouter>> resource() {
-        return R.ok(roleService.router());
+    public R<List<VueRouter>> resource() {
+        return R.ok(roleService.getRouter());
     }
 
 }

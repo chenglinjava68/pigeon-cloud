@@ -15,14 +15,6 @@ import java.util.Set;
 public interface IResourceService extends IService<Resource> {
 
     /**
-     * 通过用户ID获取资源
-     *
-     * @param uid
-     * @return
-     */
-    Set<Resource> getResourceByUid(Long uid);
-
-    /**
      * 通过角色id集合获取资源
      * @param roleIdCollection
      * @return
