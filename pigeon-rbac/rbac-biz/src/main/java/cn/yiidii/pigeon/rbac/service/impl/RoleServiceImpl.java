@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
+import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -90,7 +92,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public List<VueRouter> getRouter() {
         Set<Long> ridSet = this.getRoleListByUid(SecurityUtils.getUser().getId()).stream().map(Role::getId).collect(Collectors.toSet());
         Set<Resource> roleResourceList = resourceService.getResourceByRids(ridSet);
-        List<VueRouter> treeList = dozerUtils.mapList(roleResourceList, VueRouter.class);
-        return TreeUtil.buildTree(treeList);
+        List<VueRouter> routerList = dozerUtils.mapList(roleResourceList, VueRouter.class);
+        routerList.sort(Comparator.comparing(TreeEntity::getSort));
+        return TreeUtil.buildTree(routerList);
     }
 }
