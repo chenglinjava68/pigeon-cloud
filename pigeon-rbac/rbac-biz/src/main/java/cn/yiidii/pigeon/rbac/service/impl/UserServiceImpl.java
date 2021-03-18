@@ -1,6 +1,7 @@
 package cn.yiidii.pigeon.rbac.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import cn.yiidii.pigeon.common.core.exception.BizException;
@@ -19,6 +20,7 @@ import cn.yiidii.pigeon.rbac.service.IRoleService;
 import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -56,6 +58,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    public User getUserByMobile(String mobile) {
+        return this.getOne(new LambdaQueryWrapper<User>().eq(User::getMobile, mobile));
+    }
+
+    @Override
     public UserDTO getUserDTOByUsername(String username) {
         return userMapper.getUserDTOByUsername(username);
     }
@@ -79,9 +86,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     @Transactional(rollbackFor = Exception.class)
     public User create(UserForm userForm) {
+        String username = userForm.getUsername();
+        User userByUsername = this.getUserByUsername(username);
+        if (Objects.nonNull(userByUsername)) {
+            throw new BizException(StrUtil.format("用户[{}]已存在", username));
+        }
+        String mobile = userForm.getMobile();
+        User userByMobile = this.getUserByMobile(mobile);
+        if (Objects.nonNull(userByMobile)) {
+            throw new BizException(StrUtil.format("手机号[{}]已存在", mobile));
+        }
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         user.setSalt("");
+        user.setStatus(120);
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         this.save(user);

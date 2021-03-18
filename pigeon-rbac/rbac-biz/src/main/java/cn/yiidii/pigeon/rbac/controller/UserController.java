@@ -15,7 +15,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +42,7 @@ public class UserController {
     @PostMapping
     @ApiOperation(value = "创建用户")
     public R<UserVO> create(@Validated @RequestBody UserForm userForm) {
+        Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
         User user = userService.create(userForm);
         return R.ok(dozerUtils.map(user, UserVO.class));
     }
