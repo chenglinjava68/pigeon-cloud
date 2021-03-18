@@ -10,6 +10,7 @@ import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
 import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -72,6 +74,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setUpdateTime(LocalDateTime.now());
         this.save(user);
         return this.getUserByUsername(username);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public User create(UserForm userForm) {
+        User user = new User();
+        BeanUtils.copyProperties(userForm, user);
+        user.setSalt("");
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+        this.save(user);
+        return user;
     }
 
     @Override

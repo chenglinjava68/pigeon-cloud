@@ -2,10 +2,11 @@ package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
-import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
+import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
 import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IUserService;
@@ -14,7 +15,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +35,13 @@ import java.util.List;
 public class UserController {
 
     private final IUserService userService;
+    private final DozerUtils dozerUtils;
 
     @PostMapping
     @ApiOperation(value = "创建用户")
-    public R<UserDTO> create(@Validated(value = {Add.class}) @RequestBody UserDTO userDTO) {
-        User user = userService.create(userDTO);
-        BeanUtils.copyProperties(user, userDTO);
-        return R.ok(userDTO);
+    public R<UserVO> create(@Validated @RequestBody UserForm userForm) {
+        User user = userService.create(userForm);
+        return R.ok(dozerUtils.map(user, UserVO.class));
     }
 
     @GetMapping
