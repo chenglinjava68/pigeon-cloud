@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotEmpty;
  * @create: 2021-01-13 19:09
  */
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -29,11 +31,11 @@ public class UserRole extends SuperEntity<Long> {
     @ApiModelProperty(value = "用户ID")
     @NotEmpty(message = "用户ID不能为空")
     @TableField(value = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @ApiModelProperty(value = "角色ID")
     @NotEmpty(message = "角色ID不能为空")
     @TableField(value = "role_id")
-    private Integer roleId;
+    private Long roleId;
 
 }

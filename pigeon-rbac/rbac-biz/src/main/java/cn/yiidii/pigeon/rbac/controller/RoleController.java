@@ -6,6 +6,7 @@ import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -52,6 +53,13 @@ public class RoleController {
     @ApiOperation(value = "角色菜单")
     public R<List<VueRouter>> resource() {
         return R.ok(roleService.getRouter());
+    }
+
+    @PostMapping("/bindUser")
+    @ApiOperation(value = "绑定用户")
+    public R bindUser(@RequestBody RoleUserForm roleUserForm) {
+        roleService.bindUser(roleUserForm);
+        return R.ok(null, "绑定用户成功");
     }
 
 }

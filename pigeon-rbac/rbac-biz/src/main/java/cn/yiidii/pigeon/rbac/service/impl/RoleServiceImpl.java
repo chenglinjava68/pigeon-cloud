@@ -10,8 +10,10 @@ import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
+import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.entity.UserRole;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
@@ -28,12 +30,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -52,7 +52,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     public List<Role> getRoleListByUid(Long uid) {
-        Set<Integer> roleIdList = userRoleService.lambdaQuery().eq(UserRole::getUserId, uid).list().stream().map(UserRole::getRoleId).collect(Collectors.toSet());
+        Set<Long> roleIdList = userRoleService.lambdaQuery().eq(UserRole::getUserId, uid).list().stream().map(UserRole::getRoleId).collect(Collectors.toSet());
+        if (CollectionUtils.isEmpty(roleIdList)) {
+            return new ArrayList<>();
+        }
         return this.lambdaQuery().in(Role::getId, roleIdList).list();
     }
 
@@ -117,5 +120,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         List<VueRouter> routerList = dozerUtils.mapList(roleResourceList, VueRouter.class);
         routerList.sort(Comparator.comparing(TreeEntity::getSort));
         return TreeUtil.buildTree(routerList);
+    }
+
+    @Override
+    public void bindUser(RoleUserForm roleUserForm) {
+        // roleId有效性
+        Long roleId = roleUserForm.getRoleId();
+        Role roleExist = this.getById(roleId);
+        if (Objects.isNull(roleExist)) {
+            throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
+        }
+        // 先删除角色下的用户
+        userRoleService.remove(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getRoleId, roleId));
+        // 绑定
+        List<Long> userIdList = roleUserForm.getUserIdList();
+        List<UserRole> userRoleList = userIdList.stream().map(uid -> UserRole.builder()
+                .roleId(roleId)
+                .userId(uid)
+                .createTime(LocalDateTime.now())
+                .createdBy(SecurityUtils.getUser().getId())
+                .build()).collect(Collectors.toList());
+        userRoleService.saveBatch(userRoleList);
     }
 }

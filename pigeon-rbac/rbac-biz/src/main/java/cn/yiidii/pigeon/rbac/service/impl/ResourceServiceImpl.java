@@ -8,6 +8,7 @@ import cn.yiidii.pigeon.rbac.service.IRoleResourceService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +27,9 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
 
     @Override
     public Set<Resource> getResourceByRids(Collection<Long> roleIdCollection) {
+        if (CollectionUtils.isEmpty(roleIdCollection)) {
+            return new HashSet<>();
+        }
         Set<Long> resourceIdList = roleResourceService.lambdaQuery().in(RoleResource::getRoleId, roleIdCollection).list().stream().map(RoleResource::getResourceId).collect(Collectors.toSet());
         List<Resource> resourceList = this.lambdaQuery().in(Resource::getId, resourceIdList).list();
         Set<Resource> resourceSet = resourceList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(r -> r.getId()))), HashSet::new));
