@@ -11,6 +11,7 @@ import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.UserRole;
+import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
@@ -23,8 +24,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -54,6 +57,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
+    public Role getRoleByCode(String code) {
+        return this.lambdaQuery().eq(Role::getCode, code).one();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int create(RoleDTO roleDTO) {
         Role roleExist = this.lambdaQuery().eq(Role::getName, roleDTO.getName()).one();
@@ -68,6 +76,18 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         role.setUpdateTime(LocalDateTime.now());
         role.setUpdatedBy(currUid);
         return this.getBaseMapper().insert(role);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int create(RoleForm roleForm) {
+        String code = roleForm.getCode();
+        Role roleByCode = getRoleByCode(code);
+        Assert.isNull(roleByCode, StrUtil.format("角色[{}]已存在", code));
+
+        Role role = new Role();
+        BeanUtils.copyProperties(roleForm, role);
+        return this.baseMapper.insert(role);
     }
 
     @Override

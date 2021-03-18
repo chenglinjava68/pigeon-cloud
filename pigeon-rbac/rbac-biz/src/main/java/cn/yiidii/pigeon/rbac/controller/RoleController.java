@@ -5,6 +5,7 @@ import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
+import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -35,8 +36,8 @@ public class RoleController {
 
     @PostMapping
     @ApiOperation(value = "创建角色")
-    public R create(@Validated(value = {Add.class}) @RequestBody RoleDTO roleDTO) {
-        int row = roleService.create(roleDTO);
+    public R create(@Validated(value = {Add.class}) @RequestBody RoleForm roleForm) {
+        int row = roleService.create(roleForm);
         return R.ok(null, row > 0 ? "创建角色成功" : "创建角色失败");
     }
 
