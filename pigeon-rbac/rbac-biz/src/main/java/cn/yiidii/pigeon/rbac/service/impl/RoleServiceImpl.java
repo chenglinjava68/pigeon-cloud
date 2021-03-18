@@ -83,7 +83,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public int create(RoleForm roleForm) {
         String code = roleForm.getCode();
         Role roleByCode = getRoleByCode(code);
-        Assert.isNull(roleByCode, StrUtil.format("角色[{}]已存在", code));
+        if (Objects.nonNull(roleByCode)) {
+            throw new BizException(StrUtil.format("角色[{}]已存在", code));
+        }
 
         Role role = new Role();
         BeanUtils.copyProperties(roleForm, role);
