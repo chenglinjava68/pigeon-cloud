@@ -1,15 +1,14 @@
 package cn.yiidii.pigeon.rbac.api.vo;
 
-import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
-import com.baomidou.mybatisplus.annotation.*;
+import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -32,15 +31,13 @@ public class UserVO implements Serializable {
 
     private String username;
 
-    private String salt;
-
     private String name;
 
     private String email;
 
     private String mobile;
 
-    private String sex;
+    private Sex sex;
 
     private String avatar;
 

@@ -1,9 +1,6 @@
-package cn.yiidii.pigeon.rbac.api.entity;
+package cn.yiidii.pigeon.rbac.api.form;
 
-import cn.yiidii.pigeon.common.core.base.entity.Entity;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -11,37 +8,33 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
-
 
 /**
- * 用户类
+ * 用户插入Form
  *
  * @author: YiiDii Wang
- * @create: 2021-01-08 23:37
+ * @create: 2021-03-17 21:19
  */
-@Data
 @SuperBuilder
-@NoArgsConstructor
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Accessors(chain = true)
-@TableName("user")
-@ApiModel(value = "User", description = "用户")
+@NoArgsConstructor
 @AllArgsConstructor
-public class User extends Entity<Long> {
+@ToString(callSuper = true)
+@ApiModel(value = "UserSaveForm", description = "用户保存表单")
+public class UserForm {
 
     @NotBlank(message = "用户名不能为空")
     private String username;
 
-    @NotBlank(message = "密码不能为空", groups = {Add.class, Update.class})
-    @TableField(value = "password")
+    @NotBlank(message = "密码不能为空")
     private String password;
 
-    @TableField(value = "salt")
-    private String salt;
+    @NotBlank(message = "确认密码不能为空")
+    private String confirmPassword;
 
-    @TableField(value = "name")
+    @NotBlank(message = "昵称不能为空")
     private String name;
 
     @Pattern(regexp = "^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$", message = "邮箱格式不正确")
@@ -50,17 +43,10 @@ public class User extends Entity<Long> {
     @Pattern(regexp = "^((13[0-9])|(14[0,1,4-9])|(15[0-3,5-9])|(16[2,5,6,7])|(17[0-8])|(18[0-9])|(19[0-3,5-9]))\\d{8}$", message = "手机号格式不正确")
     private String mobile;
 
-    private Sex sex;
+    private Sex sex = Sex.N;
 
     private String avatar;
 
-    @TableField(value = "`desc`")
     private String desc;
-
-    private Integer pwdErrTimes;
-
-    private LocalDateTime lastPwdErrTime;
-
-    private LocalDateTime lastLoginTime;
 
 }
