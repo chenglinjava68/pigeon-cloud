@@ -4,6 +4,7 @@ import cn.yiidii.pigeon.auth.service.IThirdPartyService;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
+import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import lombok.RequiredArgsConstructor;
 import me.zhyd.oauth.model.AuthUser;
@@ -33,7 +34,14 @@ public class ThirdPartyServiceImpl implements IThirdPartyService {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(authUser.getUsername());
         userDTO.setPassword(authUser.getUsername());
-        userDTO.setSex(authUser.getGender().getCode());
+        String sexCode = authUser.getGender().getCode();
+        Sex sex = null;
+        try {
+            sex = Sex.get(Integer.valueOf(sexCode), Sex.N);
+        } catch (Exception e) {
+            sex = Sex.N;
+        }
+        userDTO.setSex(sex);
         userDTO.setEmail(authUser.getEmail());
         userDTO.setAvatar(authUser.getAvatar());
         return userDTO;
