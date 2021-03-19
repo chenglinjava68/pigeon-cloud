@@ -15,7 +15,6 @@ import cn.yiidii.pigeon.rbac.api.entity.UserRole;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
-import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
 import cn.yiidii.pigeon.rbac.service.IRoleResourceService;
@@ -26,6 +25,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -116,12 +116,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public List<VueRouter> getRouter() {
-        Set<Long> ridSet = this.getRoleListByUid(SecurityUtils.getUser().getId()).stream().map(Role::getId).collect(Collectors.toSet());
-        Set<Resource> roleResourceList = resourceService.getResourceByRids(ridSet);
-        List<VueRouter> routerList = dozerUtils.mapList(roleResourceList, VueRouter.class);
-        routerList.sort(Comparator.comparing(TreeEntity::getSort));
-        return TreeUtil.buildTree(routerList);
+    public List<Resource> getRoleMenu(Long roleId) {
+        // roleId有效性
+        Role roleExist = this.getById(roleId);
+        if (Objects.isNull(roleExist)) {
+            throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
+        }
+        Set<Resource> roleResourceSet = resourceService.getResourceByRids(Lists.newArrayList(roleId));
+        List<Resource> roleResourceList = new ArrayList<>(roleResourceSet);
+        roleResourceList.sort(Comparator.comparing(TreeEntity::getSort));
+        return TreeUtil.buildTree(roleResourceList);
     }
 
     @Override
@@ -164,6 +168,5 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .createdBy(SecurityUtils.getUser().getId())
                 .build()).collect(Collectors.toList());
         roleResourceService.saveBatch(roleResourceList);
-
     }
 }

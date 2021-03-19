@@ -36,9 +36,8 @@ public class ResourceController {
     @ApiOperation(value = "所有菜单树")
     public R allTree(){
         List<Resource> allResource = resourceService.lambdaQuery().list();
-        List<VueRouter> routerList = dozerUtils.mapList(allResource, VueRouter.class);
-        routerList.sort(Comparator.comparing(TreeEntity::getSort));
-        return R.ok(TreeUtil.buildTree(routerList));
+        allResource.sort(Comparator.comparing(TreeEntity::getSort));
+        return R.ok(TreeUtil.buildTree(allResource));
     }
 
 }

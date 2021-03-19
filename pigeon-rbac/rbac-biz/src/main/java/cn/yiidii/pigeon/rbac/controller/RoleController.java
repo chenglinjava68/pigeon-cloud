@@ -3,12 +3,11 @@ package cn.yiidii.pigeon.rbac.controller;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
-import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
+import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
-import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -50,10 +49,10 @@ public class RoleController {
         return R.ok(roleService.list(searchParam));
     }
 
-    @GetMapping("/router")
+    @GetMapping("/menu/{roleId}")
     @ApiOperation(value = "角色菜单")
-    public R<List<VueRouter>> resource() {
-        return R.ok(roleService.getRouter());
+    public R<List<Resource>> menu(@PathVariable Long roleId) {
+        return R.ok(roleService.getRoleMenu(roleId));
     }
 
     @PostMapping("/bindUser")
@@ -67,7 +66,7 @@ public class RoleController {
     @ApiOperation(value = "绑定菜单")
     public R bindMenu(@RequestBody RoleMenuForm roleMenuForm) {
         roleService.bindMenu(roleMenuForm);
-        return R.ok(null, "绑定权限成功");
+        return R.ok(null, "绑定菜单成功");
     }
 
 }
