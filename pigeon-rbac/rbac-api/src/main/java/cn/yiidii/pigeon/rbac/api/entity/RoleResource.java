@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotEmpty;
  * @create: 2021-01-13 21:31
  */
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -35,10 +37,5 @@ public class RoleResource extends SuperEntity<Long> {
     @NotEmpty(message = "资源ID不能为空")
     @TableField(value = "resource_id")
     private Long resourceId;
-
-    @ApiModelProperty(value = "资源类型")
-    @NotEmpty(message = "资源类型不能为空")
-    @TableField(value = "resource_id")
-    private Integer type;
 
 }

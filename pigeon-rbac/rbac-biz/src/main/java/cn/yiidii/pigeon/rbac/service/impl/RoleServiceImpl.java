@@ -10,13 +10,15 @@ import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
-import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
 import cn.yiidii.pigeon.rbac.api.entity.UserRole;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
+import cn.yiidii.pigeon.rbac.service.IRoleResourceService;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import cn.yiidii.pigeon.rbac.service.IUserRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -29,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     private final IUserRoleService userRoleService;
     private final IResourceService resourceService;
+    private final IRoleResourceService roleResourceService;
     private final DozerUtils dozerUtils;
 
     @Override
@@ -123,6 +125,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void bindUser(RoleUserForm roleUserForm) {
         // roleId有效性
         Long roleId = roleUserForm.getRoleId();
@@ -141,5 +144,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .createdBy(SecurityUtils.getUser().getId())
                 .build()).collect(Collectors.toList());
         userRoleService.saveBatch(userRoleList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void bindMenu(RoleMenuForm roleMenuForm) {
+        Long roleId = roleMenuForm.getRoleId();
+        Role roleExist = this.getById(roleId);
+        if (Objects.isNull(roleExist)) {
+            throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
+        }
+        // 先删除角色下的资源
+        roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().eq(RoleResource::getRoleId, roleId));
+        List<Long> resourceIdList = roleMenuForm.getMenuIdList();
+        List<RoleResource> roleResourceList = resourceIdList.stream().map(resId -> RoleResource.builder()
+                .roleId(roleId)
+                .resourceId(resId)
+                .createTime(LocalDateTime.now())
+                .createdBy(SecurityUtils.getUser().getId())
+                .build()).collect(Collectors.toList());
+        roleResourceService.saveBatch(roleResourceList);
+
     }
 }

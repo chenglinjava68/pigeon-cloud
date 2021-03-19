@@ -6,6 +6,7 @@ import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
@@ -60,6 +61,13 @@ public class RoleController {
     public R bindUser(@RequestBody RoleUserForm roleUserForm) {
         roleService.bindUser(roleUserForm);
         return R.ok(null, "绑定用户成功");
+    }
+
+    @PostMapping("/bindMenu")
+    @ApiOperation(value = "绑定菜单")
+    public R bindMenu(@RequestBody RoleMenuForm roleMenuForm) {
+        roleService.bindMenu(roleMenuForm);
+        return R.ok(null, "绑定权限成功");
     }
 
 }
