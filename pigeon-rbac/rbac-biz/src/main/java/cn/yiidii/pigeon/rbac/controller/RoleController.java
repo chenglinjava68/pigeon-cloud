@@ -69,4 +69,11 @@ public class RoleController {
         return R.ok(null, "绑定菜单成功");
     }
 
+    @DeleteMapping("/delBatch")
+    @ApiOperation(value = "删除角色")
+    public R delRole(@RequestBody List<Long> roleIdList) {
+        roleService.delRole(roleIdList);
+        return R.ok(null, "删除角色成功");
+    }
+
 }

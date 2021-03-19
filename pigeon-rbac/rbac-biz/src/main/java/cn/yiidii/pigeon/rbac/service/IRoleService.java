@@ -79,4 +79,11 @@ public interface IRoleService extends IService<Role> {
      * @param roleMenuForm
      */
     void bindMenu(RoleMenuForm roleMenuForm);
+
+    /**
+     * 删除角色
+     * @param roleIdList    角色ID集合
+     * @return
+     */
+    boolean delRole(List<Long> roleIdList);
 }

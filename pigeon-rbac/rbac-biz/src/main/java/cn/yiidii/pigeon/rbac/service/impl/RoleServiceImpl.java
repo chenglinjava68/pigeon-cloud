@@ -169,4 +169,20 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .build()).collect(Collectors.toList());
         roleResourceService.saveBatch(roleResourceList);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean delRole(List<Long> roleIdList) {
+        List<Role> delRoleList = roleIdList.stream().map(rid -> Role.builder()
+                .id(rid)
+                .updateTime(LocalDateTime.now())
+                .updatedBy(SecurityUtils.getUser().getId())
+                .status(30)
+                .build())
+                .collect(Collectors.toList());
+        boolean isDelRoleSuccess = this.updateBatchById(delRoleList);
+        boolean isDelRoleResSuccess = roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().in(RoleResource::getRoleId, roleIdList));
+        return isDelRoleSuccess && isDelRoleResSuccess;
+    }
+
 }
