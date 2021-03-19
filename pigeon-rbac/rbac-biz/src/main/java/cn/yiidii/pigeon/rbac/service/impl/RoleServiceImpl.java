@@ -8,7 +8,7 @@ import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
+import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
 import cn.yiidii.pigeon.rbac.api.entity.UserRole;
@@ -116,16 +116,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public List<Resource> getRoleMenu(Long roleId) {
+    public List<Menu> getRoleMenu(Long roleId) {
         // roleId有效性
         Role roleExist = this.getById(roleId);
         if (Objects.isNull(roleExist)) {
             throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
         }
-        Set<Resource> roleResourceSet = resourceService.getResourceByRids(Lists.newArrayList(roleId));
-        List<Resource> roleResourceList = new ArrayList<>(roleResourceSet);
-        roleResourceList.sort(Comparator.comparing(TreeEntity::getSort));
-        return TreeUtil.buildTree(roleResourceList);
+        Set<Menu> roleMenuSet = resourceService.getResourceByRids(Lists.newArrayList(roleId));
+        List<Menu> roleMenuList = new ArrayList<>(roleMenuSet);
+        roleMenuList.sort(Comparator.comparing(TreeEntity::getSort));
+        return TreeUtil.buildTree(roleMenuList);
     }
 
     @Override

@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @TableName("resource")
 @ApiModel(value = "Resource", description = "资源")
 @AllArgsConstructor
-public class Resource extends TreeEntity<Resource, Long> {
+public class Menu extends TreeEntity<Menu, Long> {
 
     @ApiModelProperty(value = "资源code")
     @TableField(value = "code")

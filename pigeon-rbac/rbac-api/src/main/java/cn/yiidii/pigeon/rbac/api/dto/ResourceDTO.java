@@ -1,6 +1,5 @@
 package cn.yiidii.pigeon.rbac.api.dto;
 
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

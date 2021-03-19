@@ -8,7 +8,7 @@ import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
+import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
@@ -20,7 +20,6 @@ import cn.yiidii.pigeon.rbac.service.IRoleService;
 import cn.yiidii.pigeon.rbac.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -127,8 +126,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<VueRouter> getRouter(Long uid) {
         Set<Long> roleIdSet = roleService.getRoleListByUid(uid).stream().map(Role::getId).collect(Collectors.toSet());
-        Set<Resource> resourceSet = resourceService.getResourceByRids(roleIdSet);
-        List<VueRouter> routerList = dozerUtils.mapList(resourceSet, VueRouter.class);
+        Set<Menu> menuSet = resourceService.getResourceByRids(roleIdSet);
+        List<VueRouter> routerList = dozerUtils.mapList(menuSet, VueRouter.class);
         routerList.sort(Comparator.comparing(TreeEntity::getSort));
         return TreeUtil.buildTree(routerList);
     }

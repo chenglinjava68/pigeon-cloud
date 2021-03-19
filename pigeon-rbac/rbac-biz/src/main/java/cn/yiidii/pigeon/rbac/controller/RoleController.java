@@ -3,7 +3,7 @@ package cn.yiidii.pigeon.rbac.controller;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
+import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
@@ -51,7 +51,7 @@ public class RoleController {
 
     @GetMapping("/menu/{roleId}")
     @ApiOperation(value = "角色菜单")
-    public R<List<Resource>> menu(@PathVariable Long roleId) {
+    public R<List<Menu>> menu(@PathVariable Long roleId) {
         return R.ok(roleService.getRoleMenu(roleId));
     }
 

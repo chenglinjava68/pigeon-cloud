@@ -1,6 +1,6 @@
 package cn.yiidii.pigeon.rbac.service.impl;
 
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
+import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
 import cn.yiidii.pigeon.rbac.mapper.ResourceMapper;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
@@ -21,19 +21,19 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> implements IResourceService {
+public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Menu> implements IResourceService {
 
     private final IRoleResourceService roleResourceService;
 
     @Override
-    public Set<Resource> getResourceByRids(Collection<Long> roleIdCollection) {
+    public Set<Menu> getResourceByRids(Collection<Long> roleIdCollection) {
         if (CollectionUtils.isEmpty(roleIdCollection)) {
             return new HashSet<>();
         }
         Set<Long> resourceIdList = roleResourceService.lambdaQuery().in(RoleResource::getRoleId, roleIdCollection).list().stream().map(RoleResource::getResourceId).collect(Collectors.toSet());
-        List<Resource> resourceList = this.lambdaQuery().in(Resource::getId, resourceIdList).list();
-        Set<Resource> resourceSet = resourceList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(r -> r.getId()))), HashSet::new));
-        return resourceSet;
+        List<Menu> menuList = this.lambdaQuery().in(Menu::getId, resourceIdList).list();
+        Set<Menu> menuSet = menuList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(r -> r.getId()))), HashSet::new));
+        return menuSet;
     }
 
 }

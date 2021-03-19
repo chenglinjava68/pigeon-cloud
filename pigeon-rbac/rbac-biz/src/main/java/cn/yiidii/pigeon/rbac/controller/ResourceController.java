@@ -4,8 +4,7 @@ import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
-import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
+import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.service.IResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,9 +34,9 @@ public class ResourceController {
     @GetMapping("tree")
     @ApiOperation(value = "所有菜单树")
     public R allTree(){
-        List<Resource> allResource = resourceService.lambdaQuery().list();
-        allResource.sort(Comparator.comparing(TreeEntity::getSort));
-        return R.ok(TreeUtil.buildTree(allResource));
+        List<Menu> allMenu = resourceService.lambdaQuery().list();
+        allMenu.sort(Comparator.comparing(TreeEntity::getSort));
+        return R.ok(TreeUtil.buildTree(allMenu));
     }
 
 }

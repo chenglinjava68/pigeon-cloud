@@ -1,6 +1,6 @@
 package cn.yiidii.pigeon.rbac.service;
 
-import cn.yiidii.pigeon.rbac.api.entity.Resource;
+import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Collection;
@@ -12,13 +12,13 @@ import java.util.Set;
  * @author: YiiDii Wang
  * @create: 2021-01-13 22:00
  */
-public interface IResourceService extends IService<Resource> {
+public interface IResourceService extends IService<Menu> {
 
     /**
      * 通过角色id集合获取资源
      * @param roleIdCollection
      * @return
      */
-    Set<Resource> getResourceByRids(Collection<Long> roleIdCollection);
+    Set<Menu> getResourceByRids(Collection<Long> roleIdCollection);
 
 }
