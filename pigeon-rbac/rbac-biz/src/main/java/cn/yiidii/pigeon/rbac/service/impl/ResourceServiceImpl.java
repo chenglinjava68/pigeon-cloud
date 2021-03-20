@@ -31,6 +31,9 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Menu> imple
             return new HashSet<>();
         }
         Set<Long> resourceIdList = roleResourceService.lambdaQuery().in(RoleResource::getRoleId, roleIdCollection).list().stream().map(RoleResource::getResourceId).collect(Collectors.toSet());
+        if(CollectionUtils.isEmpty(resourceIdList)){
+            return new HashSet<>();
+        }
         List<Menu> menuList = this.lambdaQuery().in(Menu::getId, resourceIdList).list();
         Set<Menu> menuSet = menuList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(r -> r.getId()))), HashSet::new));
         return menuSet;

@@ -19,8 +19,8 @@ import lombok.experimental.Accessors;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("resource")
-@ApiModel(value = "Resource", description = "资源")
+@TableName("menu")
+@ApiModel(value = "Menu", description = "菜单")
 @AllArgsConstructor
 public class Menu extends TreeEntity<Menu, Long> {
 

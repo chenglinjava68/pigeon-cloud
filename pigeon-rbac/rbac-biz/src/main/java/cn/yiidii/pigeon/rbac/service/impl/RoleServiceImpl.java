@@ -98,6 +98,20 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean update(RoleForm roleForm) {
+        Long id = roleForm.getId();
+        // roleId有效性
+        Role roleExist = this.getById(id);
+        if (Objects.isNull(roleExist)) {
+            throw new BizException(StrUtil.format("角色ID[{}]不存在", id));
+        }
+        Role role = new Role();
+        BeanUtils.copyProperties(roleForm, role);
+        return this.updateById(role);
+    }
+
+    @Override
     public IPage<Role> list(BaseSearchParam searchParam) {
         LambdaQueryWrapper<Role> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), Role::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());

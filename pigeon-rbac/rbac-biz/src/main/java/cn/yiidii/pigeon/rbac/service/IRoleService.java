@@ -54,6 +54,14 @@ public interface IRoleService extends IService<Role> {
     int create(RoleForm roleForm);
 
     /**
+     * 更新角色
+     *
+     * @param roleForm
+     * @return
+     */
+    boolean update(RoleForm roleForm);
+
+    /**
      * 角色列表
      *
      * @param searchParam

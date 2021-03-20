@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.form;
 
+import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,7 +17,11 @@ import javax.validation.constraints.Pattern;
 @ApiModel("角色Form")
 public class RoleForm {
 
-    @ApiModelProperty(value = "用户编码")
+    @ApiModelProperty(value = "角色ID")
+    @NotEmpty(message = "角色ID不能为空",groups = SuperEntity.Add.class)
+    private Long id;
+
+    @ApiModelProperty(value = "角色编码")
     @NotEmpty(message = "角色编码不能为空")
     @Pattern(regexp = "\\w{3,20}", message = "角色编码限制3-20位，数字字母及下划线")
     private String code;

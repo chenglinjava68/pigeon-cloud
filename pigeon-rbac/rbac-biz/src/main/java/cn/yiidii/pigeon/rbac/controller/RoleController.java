@@ -2,7 +2,7 @@ package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
-import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.Add;
+import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.*;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
@@ -40,6 +40,13 @@ public class RoleController {
     public R create(@Validated(value = {Add.class}) @RequestBody RoleForm roleForm) {
         int row = roleService.create(roleForm);
         return R.ok(null, row > 0 ? "创建角色成功" : "创建角色失败");
+    }
+
+    @PutMapping
+    @ApiOperation(value = "更新角色")
+    public R update(@Validated(value = {Update.class}) @RequestBody RoleForm roleForm) {
+        boolean update = roleService.update(roleForm);
+        return R.ok(null, update ? "更新角色成功" : "更新角色失败");
     }
 
     @GetMapping("/list")
