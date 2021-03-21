@@ -61,6 +61,22 @@ public interface IUserService extends IService<User> {
     User create(UserForm userForm);
 
     /**
+     * 更新用户
+     *
+     * @param userForm
+     * @return
+     */
+    User update(UserForm userForm);
+
+    /**
+     * 删除用户
+     *
+     * @param id    用户ID
+     * @return
+     */
+    void delete(Long id);
+
+    /**
      * 用户列表
      *
      * @param searchParam

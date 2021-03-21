@@ -14,10 +14,7 @@ import cn.yiidii.pigeon.rbac.api.dto.MenuDTO;
 import cn.yiidii.pigeon.rbac.api.dto.PermissionDTO;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
-import cn.yiidii.pigeon.rbac.api.entity.Menu;
-import cn.yiidii.pigeon.rbac.api.entity.Permission;
-import cn.yiidii.pigeon.rbac.api.entity.Role;
-import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.entity.*;
 import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
 import cn.yiidii.pigeon.rbac.api.vo.UserVO;
@@ -52,6 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     private final UserMapper userMapper;
     private final IRoleService roleService;
+    private final IUserRoleService userRoleService;
     private final IRoleResourceService roleResourceService;
     private final IMenuService menuService;
     private final IPermissionService permissionService;
@@ -59,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User getUserByUsername(String username) {
-        return this.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+        return this.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username).ne(User::getStatus, Status.DELETED));
     }
 
     @Override
@@ -130,12 +128,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public User update(UserForm userForm) {
+        Long uid = userForm.getId();
+        // 用户校验
+        User userExist = this.getById(uid);
+        if (Objects.isNull(userExist)) {
+            throw new BizException(StrUtil.format("用户(id={})不存在", uid));
+        }
+        // 手机号校验
+        String mobile = userForm.getMobile();
+        if (StringUtils.isNotBlank(mobile) && !StringUtils.equals(mobile, userExist.getMobile())) {
+            boolean mobileExist = this.lambdaQuery().eq(User::getMobile, mobile).ne(User::getId, uid).count() > 0;
+            if (mobileExist) {
+                throw new BizException(StrUtil.format("手机号[{}]已存在", mobile));
+            }
+        }
+        // 复制属性，更新
+        User user = new User();
+        BeanUtils.copyProperties(userForm, user);
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+        this.updateById(user);
+        return user;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id) {
+        User userExist = this.getById(id);
+        if (Objects.isNull(userExist)) {
+            throw new BizException(StrUtil.format("用户(id={})不存在", id));
+        }
+        // 删除用户
+        userExist.setStatus(Status.DELETED);
+        boolean success = this.updateById(userExist);
+        if (!success) {
+            throw new BizException(StrUtil.format("刪除用户(id={})失败", id));
+        }
+        // 删除关联的角色
+        userRoleService.remove(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, id));
+    }
+
+    @Override
     public IPage<UserVO> list(BaseSearchParam searchParam) {
         LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), User::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
         queryWrapper.like(isKeyword, User::getName, searchParam.getKeyword()).or(isKeyword)
-                .like(isKeyword, User::getId, searchParam.getKeyword());
+                .like(isKeyword, User::getId, searchParam.getKeyword())
+                .in(User::getStatus, Status.ENABLED, Status.DISABLED);
 
         // 根据排序字段进行排序
         if (StringUtils.isNotBlank(searchParam.getOrderBy())) {

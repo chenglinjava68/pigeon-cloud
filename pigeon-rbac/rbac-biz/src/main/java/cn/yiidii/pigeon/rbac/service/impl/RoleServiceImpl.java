@@ -65,7 +65,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     public Role getRoleByCode(String code) {
-        return this.lambdaQuery().eq(Role::getCode, code).one();
+        return this.lambdaQuery().eq(Role::getCode, code).ne(Role::getStatus, Status.DELETED).one();
     }
 
     @Override

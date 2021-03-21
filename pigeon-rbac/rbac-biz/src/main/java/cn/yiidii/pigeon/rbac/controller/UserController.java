@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.PermissionDTO;
@@ -49,6 +50,22 @@ public class UserController {
         Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
         User user = userService.create(userForm);
         return R.ok(dozerUtils.map(user, UserVO.class));
+    }
+
+    @PutMapping("/{id}")
+    @ApiOperation(value = "编辑用户")
+    @PreAuthorize("@pms.hasPermission('sys:user:edit')")
+    public R<UserVO> updateUser(@Validated(value = SuperEntity.Update.class) @RequestBody UserForm userForm) {
+        userService.update(userForm);
+        return R.ok(null, "编辑成功");
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "删除用户")
+    @PreAuthorize("@pms.hasPermission('sys:user:delete')")
+    public R<UserVO> delete(@PathVariable Long id) {
+        userService.delete(id);
+        return R.ok(null, "删除成功");
     }
 
     @GetMapping
