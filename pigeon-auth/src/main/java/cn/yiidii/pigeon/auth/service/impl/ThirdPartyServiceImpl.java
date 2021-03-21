@@ -34,14 +34,7 @@ public class ThirdPartyServiceImpl implements IThirdPartyService {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(authUser.getUsername());
         userDTO.setPassword(authUser.getUsername());
-        String sexCode = authUser.getGender().getCode();
-        Sex sex = null;
-        try {
-            sex = Sex.get(Integer.valueOf(sexCode), Sex.N);
-        } catch (Exception e) {
-            sex = Sex.N;
-        }
-        userDTO.setSex(sex);
+        userDTO.setSex(Sex.N);
         userDTO.setEmail(authUser.getEmail());
         userDTO.setAvatar(authUser.getAvatar());
         return userDTO;

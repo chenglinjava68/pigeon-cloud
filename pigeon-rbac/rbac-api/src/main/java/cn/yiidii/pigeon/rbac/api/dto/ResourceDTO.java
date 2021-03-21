@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.dto;
 
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,5 +42,5 @@ public class ResourceDTO implements Serializable {
     private String target;
 
     @ApiModelProperty(value = "状态")
-    private Integer status;
+    private Status status;
 }

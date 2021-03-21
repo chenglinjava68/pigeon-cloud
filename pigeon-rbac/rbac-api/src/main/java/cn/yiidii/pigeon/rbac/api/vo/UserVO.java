@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.vo;
 
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,7 +50,7 @@ public class UserVO implements Serializable {
 
     private LocalDateTime lastLoginTime;
 
-    protected Integer status;
+    private Status status;
 
     @ApiModelProperty(value = "最后修改时间")
     protected LocalDateTime updateTime;

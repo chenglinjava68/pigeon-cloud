@@ -19,6 +19,11 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @ApiModel(value = "Sex", description = "性别枚举")
 public enum Sex {
+
+    /**
+     * 未知
+     */
+    N(0, "未知"),
     /**
      * 男
      */
@@ -27,18 +32,11 @@ public enum Sex {
      * 女
      */
     W(2, "女"),
-    /**
-     * 未知
-     */
-    N(0, "未知");
+    ;
 
     @EnumValue
     private int code;
     @JsonValue
     private String desc;
-
-    public static Sex get(int val, Sex def) {
-        return Stream.of(values()).parallel().filter(item -> item.code == val).findAny().orElse(def);
-    }
 
 }

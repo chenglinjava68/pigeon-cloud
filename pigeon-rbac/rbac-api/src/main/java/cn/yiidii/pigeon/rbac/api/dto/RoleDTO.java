@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.dto;
 
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class RoleDTO implements Serializable {
     @NotEmpty(message = "描述不能为空")
     private String desc;
 
-    @ApiModelProperty(value = "状态（0：正常；20：不可用；30：删除）")
-    protected Integer status;
+    @ApiModelProperty(value = "状态")
+    protected Status status;
 
 }
