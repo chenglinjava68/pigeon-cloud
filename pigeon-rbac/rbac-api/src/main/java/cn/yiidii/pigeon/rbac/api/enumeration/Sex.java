@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.api.enumeration;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "Sex", description = "性别枚举")
-public enum Sex implements IEnum<Integer> {
+public enum Sex {
     /**
      * 男
      */
@@ -33,14 +34,11 @@ public enum Sex implements IEnum<Integer> {
 
     @EnumValue
     private int code;
+    @JsonValue
     private String desc;
 
     public static Sex get(int val, Sex def) {
         return Stream.of(values()).parallel().filter(item -> item.code == val).findAny().orElse(def);
     }
 
-    @Override
-    public Integer getValue() {
-        return this.getCode();
-    }
 }
