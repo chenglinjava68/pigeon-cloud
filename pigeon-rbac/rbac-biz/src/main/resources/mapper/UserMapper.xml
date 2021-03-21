@@ -23,11 +23,10 @@
         <result column="updated_by" property="updatedBy"/>
     </resultMap>
 
-    <resultMap id="UserDTOResultMap" type="cn.yiidii.pigeon.rbac.api.dto.UserDTO">
+    <resultMap id="UserBOResultMap" type="cn.yiidii.pigeon.rbac.api.bo.UserBO">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
-        <result column="salt" property="salt"/>
         <result column="name" property="name"/>
         <result column="email" property="email"/>
         <result column="password" property="mobile"/>
@@ -37,30 +36,28 @@
         <result column="pwd_err_times" property="pwdErrTimes"/>
         <result column="last_pwd_err_time" property="lastPwdErrTime"/>
         <result column="last_login_time" property="lastLoginTime"/>
-        <result column="create_time" property="createTime"/>
-        <result column="created_by" property="createdBy"/>
-        <result column="update_time" property="updateTime"/>
-        <result column="updated_by" property="updatedBy"/>
-        <collection property="roles" ofType="cn.yiidii.pigeon.rbac.api.dto.RoleDTO">
-            <result column="rname" property="name"/>
-            <result column="rdesc" property="desc"/>
+        <collection property="roles" ofType="cn.yiidii.pigeon.rbac.api.bo.RoleBO">
+            <result column="r_id" property="id"/>
+            <result column="r_code" property="code"/>
+            <result column="r_name" property="name"/>
+            <result column="r_desc" property="desc"/>
         </collection>
-        <collection property="resources" ofType="cn.yiidii.pigeon.rbac.api.dto.ResourceDTO">
-            <result column="code" property="code"/>
+        <collection property="resources" ofType="cn.yiidii.pigeon.rbac.api.bo.ResourceBO">
+            <result column="rr_resId" property="resourceId"/>
+            <result column="rr_type" property="type"/>
         </collection>
     </resultMap>
 
-    <select id="getUserDTOByUsername" resultMap="UserDTOResultMap" resultType="cn.yiidii.pigeon.rbac.api.dto.UserDTO">
+    <select id="getUserBOByUsername" resultMap="UserBOResultMap" resultType="cn.yiidii.pigeon.rbac.api.bo.UserBO">
         SELECT
             u.*,
-            r.id rid, r.name rname, r.desc rdesc,
-            m.id resid, m.code
+            r.id r_id, r.code r_code, r.name r_name, r.desc r_desc,
+            rr.role_id rr_rid, rr.resource_id rr_resId, rr.type rr_type
 		FROM
 			user u
 			LEFT JOIN user_role ur ON u.id = ur.user_id
 			LEFT JOIN role r ON r.id = ur.role_id
 			LEFT JOIN role_resource rr ON rr.role_id = r.id
-			LEFT JOIN menu m ON m.id = rr.resource_id
 		WHERE
 			u.username = #{username}
     </select>

@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("资源DTO")
-public class ResourceDTO implements Serializable {
+public class MenuDTO implements Serializable {
 
     @ApiModelProperty(value = "资源code")
     @TableField(value = "code")

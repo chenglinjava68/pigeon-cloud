@@ -8,19 +8,25 @@ import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
+import cn.yiidii.pigeon.rbac.api.bo.ResourceBO;
+import cn.yiidii.pigeon.rbac.api.bo.UserBO;
+import cn.yiidii.pigeon.rbac.api.dto.MenuDTO;
+import cn.yiidii.pigeon.rbac.api.dto.PermissionDTO;
+import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
+import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
 import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
-import cn.yiidii.pigeon.rbac.service.IResourceService;
-import cn.yiidii.pigeon.rbac.service.IRoleService;
-import cn.yiidii.pigeon.rbac.service.IUserService;
+import cn.yiidii.pigeon.rbac.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,10 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +52,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     private final UserMapper userMapper;
     private final IRoleService roleService;
-    private final IResourceService resourceService;
+    private final IRoleResourceService roleResourceService;
+    private final IMenuService menuService;
+    private final IPermissionService permissionService;
     private final DozerUtils dozerUtils;
 
     @Override
@@ -64,7 +69,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public UserDTO getUserDTOByUsername(String username) {
-        return userMapper.getUserDTOByUsername(username);
+        UserBO userBO = userMapper.getUserBOByUsername(username);
+        if (Objects.isNull(userBO)) {
+            throw new BizException("用户不存在");
+        }
+        List<RoleDTO> roleDTOList = dozerUtils.mapList(userBO.getRoles(), RoleDTO.class);
+        List<ResourceBO> resources = userBO.getResources();
+
+        List<Long> menuIdList = resources.stream().filter(resourceBO -> resourceBO.getType().equals(ResourceType.MENU)).map(ResourceBO::getResourceId).collect(Collectors.toList());
+        List<Long> permissionIdList = resources.stream().filter(resourceBO -> resourceBO.getType().equals(ResourceType.PERM)).map(ResourceBO::getResourceId).collect(Collectors.toList());
+
+        UserDTO userDTO = dozerUtils.map(userBO, UserDTO.class);
+        userDTO.setRoles(roleDTOList);
+        if (!CollectionUtils.isEmpty(menuIdList)) {
+            userDTO.setMenus(dozerUtils.mapList(menuService.lambdaQuery().in(Menu::getId, menuIdList).list(), MenuDTO.class));
+        }
+        if (!CollectionUtils.isEmpty(permissionIdList)) {
+            userDTO.setPermissions(dozerUtils.mapList(permissionService.lambdaQuery().in(Permission::getId, permissionIdList).list(), PermissionDTO.class));
+        }
+        return userDTO;
     }
 
     @Override
@@ -127,7 +150,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<VueRouter> getRouter(Long uid) {
         Set<Long> roleIdSet = roleService.getRoleListByUid(uid).stream().map(Role::getId).collect(Collectors.toSet());
-        Set<Menu> menuSet = resourceService.getResourceByRids(roleIdSet);
+        if (CollectionUtils.isEmpty(roleIdSet)) {
+            return new ArrayList<>();
+        }
+        List<Long> menuIdList = roleResourceService.getResourceByRids(roleIdSet, ResourceType.MENU);
+        if (CollectionUtils.isEmpty(menuIdList)) {
+            return new ArrayList<>();
+        }
+        List<Menu> menuSet = menuService.lambdaQuery().in(Menu::getId, menuIdList).list();
+        if (CollectionUtils.isEmpty(menuSet)) {
+            return new ArrayList<>();
+        }
         List<VueRouter> routerList = dozerUtils.mapList(menuSet, VueRouter.class);
         routerList.sort(Comparator.comparing(TreeEntity::getSort));
         return TreeUtil.buildTree(routerList);

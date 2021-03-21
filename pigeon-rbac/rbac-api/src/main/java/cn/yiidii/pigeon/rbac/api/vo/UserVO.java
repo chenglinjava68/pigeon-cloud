@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 用户VO
@@ -62,6 +63,9 @@ public class UserVO implements Serializable {
     protected LocalDateTime createTime;
 
     @ApiModelProperty(value = "创建人ID")
-    protected Long createdBy;
+    private Long createdBy;
 
+    private Boolean isDefault;
+
+    private List<String> permissions;
 }

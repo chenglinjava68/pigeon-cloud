@@ -1,41 +1,37 @@
 package cn.yiidii.pigeon.rbac.api.enumeration;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.annotation.IEnum;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.stream.Stream;
-
 /**
+ * 资源类型
+ *
  * @author: YiiDii Wang
- * @create: 2021-03-17 21:38
+ * @create: 2021-03-21 15:18
  */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "Sex", description = "性别枚举")
-public enum Sex {
+@ApiModel(value = "ResourceType", description = "资源类型枚举")
+public enum ResourceType {
 
     /**
-     * 未知
+     * 菜单
      */
-    N(0, "未知"),
+    MENU(10, "菜单"),
     /**
-     * 男
+     * 权限
      */
-    M(1, "男"),
-    /**
-     * 女
-     */
-    W(2, "女"),
+    PERM(20, "权限"),
     ;
 
     @EnumValue
     private int code;
+    @JsonValue
     private String desc;
 
 }

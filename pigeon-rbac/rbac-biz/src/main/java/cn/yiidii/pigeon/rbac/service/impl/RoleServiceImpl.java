@@ -13,11 +13,12 @@ import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
 import cn.yiidii.pigeon.rbac.api.entity.UserRole;
+import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
-import cn.yiidii.pigeon.rbac.service.IResourceService;
+import cn.yiidii.pigeon.rbac.service.IMenuService;
 import cn.yiidii.pigeon.rbac.service.IRoleResourceService;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import cn.yiidii.pigeon.rbac.service.IUserRoleService;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
     private final IUserRoleService userRoleService;
-    private final IResourceService resourceService;
+    private final IMenuService menuService;
     private final IRoleResourceService roleResourceService;
     private final DozerUtils dozerUtils;
 
@@ -137,10 +138,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         if (Objects.isNull(roleExist)) {
             throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
         }
-        Set<Menu> roleMenuSet = resourceService.getResourceByRids(Lists.newArrayList(roleId));
-        List<Menu> roleMenuList = new ArrayList<>(roleMenuSet);
-        roleMenuList.sort(Comparator.comparing(TreeEntity::getSort));
-        return TreeUtil.buildTree(roleMenuList);
+        List<Long> menuIdList = roleResourceService.getResourceByRids(Lists.newArrayList(roleId), ResourceType.MENU);
+        if (CollectionUtils.isEmpty(menuIdList)) {
+            return new ArrayList<>();
+        }
+        List<Menu> menuList = menuService.lambdaQuery().in(Menu::getId, menuIdList).list();
+        menuList.sort(Comparator.comparing(TreeEntity::getSort));
+        return TreeUtil.buildTree(menuList);
     }
 
     @Override
@@ -173,8 +177,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         if (Objects.isNull(roleExist)) {
             throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
         }
-        // 先删除角色下的资源
-        roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().eq(RoleResource::getRoleId, roleId));
+        // 先删除角色下的菜单
+        roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().eq(RoleResource::getRoleId, roleId).eq(RoleResource::getType, ResourceType.MENU));
         List<Long> resourceIdList = roleMenuForm.getMenuIdList();
         List<RoleResource> roleResourceList = resourceIdList.stream().map(resId -> RoleResource.builder()
                 .roleId(roleId)

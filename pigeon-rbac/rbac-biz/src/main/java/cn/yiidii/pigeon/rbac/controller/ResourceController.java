@@ -5,7 +5,7 @@ import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
-import cn.yiidii.pigeon.rbac.service.IResourceService;
+import cn.yiidii.pigeon.rbac.service.IMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResourceController {
 
-    private final IResourceService resourceService;
+    private final IMenuService resourceService;
     private final DozerUtils dozerUtils;
 
     @GetMapping("tree")

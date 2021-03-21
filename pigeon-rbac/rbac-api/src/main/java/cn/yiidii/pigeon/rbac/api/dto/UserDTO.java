@@ -23,7 +23,10 @@ public class UserDTO extends User {
     @ApiModelProperty(value = "角色")
     private List<RoleDTO> roles;
 
-    @ApiModelProperty(value = "资源")
-    private List<ResourceDTO> resources;
+    @ApiModelProperty(value = "菜单")
+    private List<MenuDTO> menus;
+
+    @ApiModelProperty(value = "权限")
+    private List<PermissionDTO> permissions;
 
 }

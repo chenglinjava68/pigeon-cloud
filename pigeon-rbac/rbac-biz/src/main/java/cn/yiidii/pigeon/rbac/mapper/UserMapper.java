@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.mapper;
 
+import cn.yiidii.pigeon.rbac.api.bo.UserBO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -25,9 +26,9 @@ public interface UserMapper extends BaseMapper<User> {
     List<String> getUserPermissionByUid(@Param("userId") Long userId);
 
     /**
-     * 根据用户名获取UserDTO
+     * 根据用户名获取UserBO
      * @param username
      * @return
      */
-    UserDTO getUserDTOByUsername(String username);
+    UserBO getUserBOByUsername(String username);
 }

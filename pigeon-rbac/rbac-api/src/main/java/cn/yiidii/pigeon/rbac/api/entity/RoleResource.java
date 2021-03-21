@@ -1,6 +1,7 @@
 package cn.yiidii.pigeon.rbac.api.entity;
 
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
+import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -37,5 +38,10 @@ public class RoleResource extends SuperEntity<Long> {
     @NotEmpty(message = "资源ID不能为空")
     @TableField(value = "resource_id")
     private Long resourceId;
+
+    @ApiModelProperty(value = "资源类型")
+    @NotEmpty(message = "资源类型不能为空")
+    @TableField(value = "type")
+    private ResourceType type;
 
 }

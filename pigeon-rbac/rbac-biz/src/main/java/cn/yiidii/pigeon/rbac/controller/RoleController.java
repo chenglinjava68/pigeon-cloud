@@ -37,6 +37,7 @@ public class RoleController {
 
     @PostMapping
     @ApiOperation(value = "创建角色")
+    @PreAuthorize("@pms.hasPermission('sys:role:create')")
     public R create(@Validated(value = {Add.class}) @RequestBody RoleForm roleForm) {
         int row = roleService.create(roleForm);
         return R.ok(null, row > 0 ? "创建角色成功" : "创建角色失败");
@@ -44,13 +45,13 @@ public class RoleController {
 
     @PutMapping
     @ApiOperation(value = "更新角色")
+    @PreAuthorize("@pms.hasPermission('sys:role:edit')")
     public R update(@Validated(value = {Update.class}) @RequestBody RoleForm roleForm) {
         boolean update = roleService.update(roleForm);
         return R.ok(null, update ? "更新角色成功" : "更新角色失败");
     }
 
     @GetMapping("/list")
-    @PreAuthorize("@pms.hasPermission('user')")
     @ApiOperation(value = "角色列表")
     public R<IPage<Role>> list(BaseSearchParam searchParam) {
         return R.ok(roleService.list(searchParam));
@@ -64,6 +65,7 @@ public class RoleController {
 
     @PostMapping("/bindUser")
     @ApiOperation(value = "绑定用户")
+    @PreAuthorize("@pms.hasPermission('sys:role:bindUser')")
     public R bindUser(@RequestBody RoleUserForm roleUserForm) {
         roleService.bindUser(roleUserForm);
         return R.ok(null, "绑定用户成功");
@@ -71,6 +73,7 @@ public class RoleController {
 
     @PostMapping("/bindMenu")
     @ApiOperation(value = "绑定菜单")
+    @PreAuthorize("@pms.hasPermission('sys:role:bindMenu')")
     public R bindMenu(@RequestBody RoleMenuForm roleMenuForm) {
         roleService.bindMenu(roleMenuForm);
         return R.ok(null, "绑定菜单成功");
@@ -78,6 +81,7 @@ public class RoleController {
 
     @DeleteMapping("/delBatch")
     @ApiOperation(value = "删除角色")
+    @PreAuthorize("@pms.hasPermission('sys:role:delete')")
     public R delRole(@RequestBody List<Long> roleIdList) {
         roleService.delRole(roleIdList);
         return R.ok(null, "删除角色成功");

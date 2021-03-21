@@ -1,6 +1,7 @@
 package cn.yiidii.pigeon.file.service.impl;
 
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
 import cn.yiidii.pigeon.file.mapper.AttachmentMapper;
@@ -66,7 +67,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id, boolean isDeleteInBucket) {
-        Attachment attachment = Attachment.builder().id(id).status(20).updateTime(LocalDateTime.now()).build();
+        Attachment attachment = Attachment.builder().id(id).status(Status.DELETED).updateTime(LocalDateTime.now()).build();
         int row = this.baseMapper.updateById(attachment);
         if (1 != row) {
             throw new BizException("文件不存在");

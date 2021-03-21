@@ -63,4 +63,6 @@ public class User extends Entity<Long> {
 
     private LocalDateTime lastLoginTime;
 
+    private Boolean isDefault;
+
 }

@@ -49,4 +49,6 @@ public class Menu extends TreeEntity<Menu, Long> {
     @ApiModelProperty(value = "是否外链")
     private String target;
 
+    private Boolean isDefault;
+
 }

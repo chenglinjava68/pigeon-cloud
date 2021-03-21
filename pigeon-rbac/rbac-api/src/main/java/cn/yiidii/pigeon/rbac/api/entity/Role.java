@@ -47,4 +47,6 @@ public class Role extends Entity<Long> {
     @TableField(value = "`desc`")
     private String desc;
 
+    private Boolean isDefault;
+
 }
