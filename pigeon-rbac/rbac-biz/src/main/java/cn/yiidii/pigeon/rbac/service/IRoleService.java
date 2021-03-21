@@ -8,6 +8,7 @@ import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -68,6 +69,13 @@ public interface IRoleService extends IService<Role> {
      * @return
      */
     IPage<Role> list(BaseSearchParam searchParam);
+
+    /**
+     * 角色下的用户
+     * @param roleId    角色ID
+     * @return
+     */
+    List<Long> getRoleUserIdList(Long roleId);
 
     /**
      * 角色菜单

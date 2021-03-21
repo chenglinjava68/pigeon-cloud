@@ -8,6 +8,7 @@ import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -37,7 +38,7 @@ public class RoleController {
 
     @PostMapping
     @ApiOperation(value = "创建角色")
-    @PreAuthorize("@pms.hasPermission('sys:role:create')")
+    @PreAuthorize("@pms.hasPermission('sys:role:add')")
     public R create(@Validated(value = {Add.class}) @RequestBody RoleForm roleForm) {
         int row = roleService.create(roleForm);
         return R.ok(null, row > 0 ? "创建角色成功" : "创建角色失败");
@@ -55,6 +56,12 @@ public class RoleController {
     @ApiOperation(value = "角色列表")
     public R<IPage<Role>> list(BaseSearchParam searchParam) {
         return R.ok(roleService.list(searchParam));
+    }
+
+    @GetMapping("/user/{roleId}")
+    @ApiOperation(value = "角色用户")
+    public R<List<Long>> user(@PathVariable Long roleId) {
+        return R.ok(roleService.getRoleUserIdList(roleId));
     }
 
     @GetMapping("/menu/{roleId}")

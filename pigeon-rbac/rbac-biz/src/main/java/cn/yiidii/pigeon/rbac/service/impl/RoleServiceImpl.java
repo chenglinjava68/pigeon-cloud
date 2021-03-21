@@ -9,19 +9,14 @@ import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
-import cn.yiidii.pigeon.rbac.api.entity.Menu;
-import cn.yiidii.pigeon.rbac.api.entity.Role;
-import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
-import cn.yiidii.pigeon.rbac.api.entity.UserRole;
+import cn.yiidii.pigeon.rbac.api.entity.*;
 import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
-import cn.yiidii.pigeon.rbac.service.IMenuService;
-import cn.yiidii.pigeon.rbac.service.IRoleResourceService;
-import cn.yiidii.pigeon.rbac.service.IRoleService;
-import cn.yiidii.pigeon.rbac.service.IUserRoleService;
+import cn.yiidii.pigeon.rbac.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -96,6 +91,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
         Role role = new Role();
         BeanUtils.copyProperties(roleForm, role);
+        Long uid = SecurityUtils.getUser().getId();
+        role.setCreateTime(LocalDateTime.now());
+        role.setCreatedBy(uid);
+        role.setUpdateTime(LocalDateTime.now());
+        role.setUpdatedBy(uid);
         return this.baseMapper.insert(role);
     }
 
@@ -110,6 +110,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         }
         Role role = new Role();
         BeanUtils.copyProperties(roleForm, role);
+        Long uid = SecurityUtils.getUser().getId();
+        role.setUpdateTime(LocalDateTime.now());
+        role.setUpdatedBy(uid);
         return this.updateById(role);
     }
 
@@ -129,6 +132,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         Page<Role> page = new Page<>(searchParam.getCurrent(), searchParam.getSize());
         Page<Role> rolePage = this.baseMapper.selectPage(page, queryWrapper);
         return rolePage;
+    }
+
+    @Override
+    public List<Long> getRoleUserIdList(Long roleId) {
+        // roleId有效性
+        Role roleExist = this.getById(roleId);
+        if (Objects.isNull(roleExist)) {
+            throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
+        }
+        List<Long> userIdList = userRoleService.lambdaQuery().eq(UserRole::getRoleId, roleId).list().stream().map(UserRole::getUserId).collect(Collectors.toList());
+        return userIdList;
     }
 
     @Override
@@ -183,6 +197,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         List<RoleResource> roleResourceList = resourceIdList.stream().map(resId -> RoleResource.builder()
                 .roleId(roleId)
                 .resourceId(resId)
+                .type(ResourceType.MENU)
                 .createTime(LocalDateTime.now())
                 .createdBy(SecurityUtils.getUser().getId())
                 .build()).collect(Collectors.toList());

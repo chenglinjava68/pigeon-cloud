@@ -81,9 +81,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         userDTO.setRoles(roleDTOList);
         if (!CollectionUtils.isEmpty(menuIdList)) {
             userDTO.setMenus(dozerUtils.mapList(menuService.lambdaQuery().in(Menu::getId, menuIdList).list(), MenuDTO.class));
+        } else {
+            userDTO.setMenus(new ArrayList<>());
         }
+
         if (!CollectionUtils.isEmpty(permissionIdList)) {
             userDTO.setPermissions(dozerUtils.mapList(permissionService.lambdaQuery().in(Permission::getId, permissionIdList).list(), PermissionDTO.class));
+        }else{
+            userDTO.setPermissions(new ArrayList<>());
         }
         return userDTO;
     }

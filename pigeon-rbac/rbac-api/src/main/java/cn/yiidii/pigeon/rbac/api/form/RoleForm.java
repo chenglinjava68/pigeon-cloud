@@ -7,6 +7,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -18,7 +19,7 @@ import javax.validation.constraints.Pattern;
 public class RoleForm {
 
     @ApiModelProperty(value = "角色ID")
-    @NotEmpty(message = "角色ID不能为空",groups = SuperEntity.Add.class)
+    @NotNull(message = "角色ID不能为空",groups = SuperEntity.Update.class)
     private Long id;
 
     @ApiModelProperty(value = "角色编码")

@@ -59,7 +59,7 @@
 			LEFT JOIN role r ON r.id = ur.role_id
 			LEFT JOIN role_resource rr ON rr.role_id = r.id
 		WHERE
-			u.username = #{username}
+			u.username = #{username} and u.status <![CDATA[ != ]]> 20
     </select>
     <select id="getUserPermissionByUid" resultType="java.lang.String">
 
