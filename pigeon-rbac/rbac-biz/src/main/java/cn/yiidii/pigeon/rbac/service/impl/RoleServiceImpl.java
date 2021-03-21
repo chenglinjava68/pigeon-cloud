@@ -3,6 +3,7 @@ package cn.yiidii.pigeon.rbac.service.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
@@ -189,9 +190,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public boolean delRole(List<Long> roleIdList) {
         List<Role> delRoleList = roleIdList.stream().map(rid -> Role.builder()
                 .id(rid)
+                .status(Status.DELETED)
                 .updateTime(LocalDateTime.now())
                 .updatedBy(SecurityUtils.getUser().getId())
-                .status(30)
                 .build())
                 .collect(Collectors.toList());
         boolean isDelRoleSuccess = this.updateBatchById(delRoleList);

@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
@@ -98,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         user.setSalt("");
-        user.setStatus(120);
+        user.setStatus(Status.ENABLED);
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         this.save(user);
