@@ -2,11 +2,15 @@ package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.exception.BizException;
+import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.service.IUserService;
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * test
@@ -17,7 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("test")
 @Slf4j
+@Api(tags = "测试")
+@RequiredArgsConstructor
 public class TestRabcController {
+
+    private final IUserService userService;
 
     @GetMapping("hello")
     public R<String> hello() {
@@ -30,6 +38,19 @@ public class TestRabcController {
             throw new BizException("biz exception");
         }
         return R.ok(null, "biz result");
+    }
+
+    @GetMapping("/getUserInfo")
+    @ApiOperation(value = "getUserInfo")
+    public R<User> getUserInfo(@RequestParam Long id) {
+        return R.ok(userService.getBaseMapper().selectById(id));
+    }
+
+    @PostMapping("/createUser")
+    @ApiOperation(value = "create")
+    public R<User> create(@RequestBody UserForm userForm) {
+        System.out.println(JSONObject.toJSON(userForm));
+        return R.ok(userService.create(userForm));
     }
 
 }
