@@ -122,7 +122,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), Role::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
         queryWrapper.like(isKeyword, Role::getName, searchParam.getKeyword()).or(isKeyword)
-                .like(isKeyword, Role::getId, searchParam.getKeyword());
+                .like(isKeyword, Role::getId, searchParam.getKeyword())
+                .in(Role::getStatus, Status.ENABLED, Status.DISABLED);
 
         // 根据排序字段进行排序
         if (StringUtils.isNotBlank(searchParam.getOrderBy())) {
@@ -158,7 +159,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         }
         List<Menu> menuList = menuService.lambdaQuery().in(Menu::getId, menuIdList).list();
         menuList.sort(Comparator.comparing(TreeEntity::getSort));
-        return TreeUtil.buildTree(menuList);
+        return menuList;
     }
 
     @Override
@@ -215,8 +216,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .build())
                 .collect(Collectors.toList());
         boolean isDelRoleSuccess = this.updateBatchById(delRoleList);
-        boolean isDelRoleResSuccess = roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().in(RoleResource::getRoleId, roleIdList));
-        return isDelRoleSuccess && isDelRoleResSuccess;
+        roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().in(RoleResource::getRoleId, roleIdList));
+        return isDelRoleSuccess;
     }
 
 }
