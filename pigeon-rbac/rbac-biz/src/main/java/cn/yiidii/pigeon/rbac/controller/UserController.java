@@ -60,12 +60,12 @@ public class UserController {
         return R.ok(null, "编辑成功");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delBatch")
     @ApiOperation(value = "删除用户")
     @PreAuthorize("@pms.hasPermission('sys:user:delete')")
-    public R<UserVO> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return R.ok(null, "删除成功");
+    public R<UserVO> delete(@RequestBody List<Long> uidList) {
+        userService.deleteUser(uidList);
+        return R.ok(null, "删除用户成功");
     }
 
     @GetMapping

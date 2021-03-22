@@ -74,7 +74,7 @@ public interface IUserService extends IService<User> {
      * @param id    用户ID
      * @return
      */
-    void delete(Long id);
+    void deleteUser(List<Long> uidList);
 
     /**
      * 用户列表

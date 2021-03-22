@@ -8,6 +8,7 @@ import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
+import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.bo.ResourceBO;
 import cn.yiidii.pigeon.rbac.api.bo.UserBO;
 import cn.yiidii.pigeon.rbac.api.dto.MenuDTO;
@@ -21,6 +22,7 @@ import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
 import cn.yiidii.pigeon.rbac.service.*;
+import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -87,7 +89,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         if (!CollectionUtils.isEmpty(permissionIdList)) {
             userDTO.setPermissions(dozerUtils.mapList(permissionService.lambdaQuery().in(Permission::getId, permissionIdList).list(), PermissionDTO.class));
-        }else{
+        } else {
             userDTO.setPermissions(new ArrayList<>());
         }
         return userDTO;
@@ -160,19 +162,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id) {
-        User userExist = this.getById(id);
-        if (Objects.isNull(userExist)) {
-            throw new BizException(StrUtil.format("用户(id={})不存在", id));
-        }
+    public void deleteUser(List<Long> uidList) {
+        List<User> delUserList = uidList.stream().map(uid -> User.builder()
+                .id(uid)
+                .status(Status.DELETED)
+                .updateTime(LocalDateTime.now())
+                .updatedBy(SecurityUtils.getUser().getId()).build()).collect(Collectors.toList());
         // 删除用户
-        userExist.setStatus(Status.DELETED);
-        boolean success = this.updateById(userExist);
-        if (!success) {
-            throw new BizException(StrUtil.format("刪除用户(id={})失败", id));
-        }
+        this.updateBatchById(delUserList);
         // 删除关联的角色
-        userRoleService.remove(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, id));
+        userRoleService.remove(Wrappers.<UserRole>lambdaQuery().in(UserRole::getUserId, uidList));
     }
 
     @Override
