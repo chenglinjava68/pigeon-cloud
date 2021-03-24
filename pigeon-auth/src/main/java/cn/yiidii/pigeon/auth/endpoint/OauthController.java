@@ -3,6 +3,8 @@ package cn.yiidii.pigeon.auth.endpoint;
 import cn.yiidii.pigeon.auth.service.IThirdPartyService;
 import cn.yiidii.pigeon.auth.util.AuthRequestHelper;
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.exception.code.ExceptionCode;
+import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,7 +20,6 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -98,19 +99,16 @@ public class OauthController {
      */
     @RequestMapping("/callback/{source}")
     @ApiIgnore
-    public ModelAndView login(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request) {
+    public R login(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request) {
         AuthRequest authRequest = authRequestHelper.getAuthRequest(source);
         AuthResponse<AuthUser> response = authRequest.login(callback);
 
         if (response.ok()) {
-            thirdPartyService.save(response.getData());
-            return new ModelAndView("redirect:/users");
+            // TODO 不存在用户则新增并登录；存在用户直接登录返回token
+            UserDTO save = thirdPartyService.save(response.getData());
+            return R.ok(save);
         }
-
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("errorMsg", response.getMsg());
-
-        return new ModelAndView("error", map);
+        return R.failed(ExceptionCode.THIRD_PARTY_LOGIN.getCode(), ExceptionCode.THIRD_PARTY_LOGIN.getMsg(), response.getMsg());
     }
 
 }
