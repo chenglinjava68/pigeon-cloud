@@ -104,9 +104,8 @@ public class OauthController {
         AuthResponse<AuthUser> response = authRequest.login(callback);
 
         if (response.ok()) {
-            // TODO 不存在用户则新增并登录；存在用户直接登录返回token
-            UserDTO save = thirdPartyService.save(response.getData());
-            return R.ok(save);
+            OAuth2AccessToken token = thirdPartyService.handle(response.getData());
+            return R.ok(token);
         }
         return R.failed(ExceptionCode.THIRD_PARTY_LOGIN.getCode(), ExceptionCode.THIRD_PARTY_LOGIN.getMsg(), response.getMsg());
     }
