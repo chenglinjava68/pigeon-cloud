@@ -40,6 +40,7 @@ public class AuthRequestHelper {
 
         switch (source.toLowerCase()) {
             case "github":
+            case "gitee":
                 authRequest = new AuthGithubRequest(AuthConfig.builder()
                         .clientId(authProperties.getGithub().getClientId())
                         .clientSecret(authProperties.getGithub().getClientSecret())
