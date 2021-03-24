@@ -36,7 +36,7 @@ public class ResourceController {
     private final IPermissionService permissionService;
     private final DozerUtils dozerUtils;
 
-    @GetMapping("tree")
+    @GetMapping("menuTree")
     @ApiOperation(value = "所有菜单树")
     public R menuTree() {
         List<Menu> allMenu = menuService.lambdaQuery().list();
@@ -44,9 +44,9 @@ public class ResourceController {
         return R.ok(TreeUtil.buildTree(allMenu));
     }
 
-    @GetMapping("permsMap")
+    @GetMapping("menuPermsMap")
     @ApiOperation(value = "菜单-权限映射")
-    public R permsMap() {
+    public R menuPermsMap() {
         List<Permission> allPermission = permissionService.lambdaQuery().list();
         Map<Long, List<Permission>> permsMap = allPermission.stream().collect(Collectors.groupingBy(Permission::getMenuId));
         return R.ok(permsMap);
