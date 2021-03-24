@@ -5,7 +5,9 @@ import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
+import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.service.IMenuService;
+import cn.yiidii.pigeon.rbac.service.IPermissionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 资源
@@ -28,15 +32,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResourceController {
 
-    private final IMenuService resourceService;
+    private final IMenuService menuService;
+    private final IPermissionService permissionService;
     private final DozerUtils dozerUtils;
 
     @GetMapping("tree")
     @ApiOperation(value = "所有菜单树")
-    public R allTree(){
-        List<Menu> allMenu = resourceService.lambdaQuery().list();
+    public R menuTree() {
+        List<Menu> allMenu = menuService.lambdaQuery().list();
         allMenu.sort(Comparator.comparing(TreeEntity::getSort));
         return R.ok(TreeUtil.buildTree(allMenu));
+    }
+
+    @GetMapping("permsMap")
+    @ApiOperation(value = "菜单-权限映射")
+    public R permsMap() {
+        List<Permission> allPermission = permissionService.lambdaQuery().list();
+        Map<Long, List<Permission>> permsMap = allPermission.stream().collect(Collectors.groupingBy(Permission::getMenuId));
+        return R.ok(permsMap);
     }
 
 }
