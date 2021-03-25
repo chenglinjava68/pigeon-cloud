@@ -4,6 +4,7 @@ package cn.yiidii.pigeon.rbac.service;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
+import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
@@ -83,6 +84,13 @@ public interface IRoleService extends IService<Role> {
      * @return
      */
     List<Menu> getRoleMenu(Long roleId);
+
+    /**
+     * 角色权限
+     * @param roleId    角色ID
+     * @return
+     */
+    List<Permission> getRolePermission(Long roleId);
 
     /**
      * 绑定用户

@@ -46,6 +46,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     private final IUserRoleService userRoleService;
     private final IMenuService menuService;
+    private final IPermissionService permissionService;
     private final IRoleResourceService roleResourceService;
     private final DozerUtils dozerUtils;
 
@@ -160,6 +161,21 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         List<Menu> menuList = menuService.lambdaQuery().in(Menu::getId, menuIdList).list();
         menuList.sort(Comparator.comparing(TreeEntity::getSort));
         return menuList;
+    }
+
+    @Override
+    public List<Permission> getRolePermission(Long roleId){
+        // roleId有效性
+        Role roleExist = this.getById(roleId);
+        if (Objects.isNull(roleExist)) {
+            throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
+        }
+        List<Long> permissionIdList = roleResourceService.getResourceByRids(Lists.newArrayList(roleId), ResourceType.PERM);
+        if (CollectionUtils.isEmpty(permissionIdList)) {
+            return new ArrayList<>();
+        }
+        List<Permission> permissionList = permissionService.lambdaQuery().in(Permission::getId, permissionIdList).list();
+        return permissionList;
     }
 
     @Override

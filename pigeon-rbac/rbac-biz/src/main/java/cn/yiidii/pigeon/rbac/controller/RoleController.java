@@ -4,6 +4,7 @@ import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.*;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
+import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
@@ -19,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Permissions;
 import java.util.List;
 
 /**
@@ -68,6 +70,12 @@ public class RoleController {
     @ApiOperation(value = "角色菜单")
     public R<List<Menu>> menu(@PathVariable Long roleId) {
         return R.ok(roleService.getRoleMenu(roleId));
+    }
+
+    @GetMapping("/perms/{roleId}")
+    @ApiOperation(value = "角色权限")
+    public R<List<Permission>> perms(@PathVariable Long roleId) {
+        return R.ok(roleService.getRolePermission(roleId));
     }
 
     @PostMapping("/bindUser")
