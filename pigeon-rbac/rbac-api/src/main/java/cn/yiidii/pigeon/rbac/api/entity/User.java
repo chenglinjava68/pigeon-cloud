@@ -65,4 +65,6 @@ public class User extends Entity<Long> {
 
     private Boolean isDefault;
 
+    private Integer source;
+
 }
