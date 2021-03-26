@@ -22,6 +22,10 @@ public class RoleResourceForm {
     @NotNull(message = "角色ID不能为空")
     Long roleId;
 
-    @NotEmpty(message = "菜单ID不能为空")
+    @ApiModelProperty(value = "菜单ID")
     List<Long> menuIdList;
+
+    @ApiModelProperty(value = "权限ID")
+    List<Long> permissionIdList;
+
 }

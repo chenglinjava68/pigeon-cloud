@@ -206,13 +206,25 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         if (Objects.isNull(roleExist)) {
             throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
         }
-        // 先删除角色下的菜单
-        roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().eq(RoleResource::getRoleId, roleId).eq(RoleResource::getType, ResourceType.MENU));
+        // 先删除角色下的菜单和权限
+        roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().eq(RoleResource::getRoleId, roleId));
+        // 绑定菜单
         List<Long> resourceIdList = roleResourceForm.getMenuIdList();
         List<RoleResource> roleResourceList = resourceIdList.stream().map(resId -> RoleResource.builder()
                 .roleId(roleId)
                 .resourceId(resId)
                 .type(ResourceType.MENU)
+                .createTime(LocalDateTime.now())
+                .createdBy(SecurityUtils.getUser().getId())
+                .build()).collect(Collectors.toList());
+        roleResourceService.saveBatch(roleResourceList);
+
+        // 绑定权限
+        List<Long> permissionIdList = roleResourceForm.getPermissionIdList();
+        roleResourceList = permissionIdList.stream().map(resId -> RoleResource.builder()
+                .roleId(roleId)
+                .resourceId(resId)
+                .type(ResourceType.PERM)
                 .createTime(LocalDateTime.now())
                 .createdBy(SecurityUtils.getUser().getId())
                 .build()).collect(Collectors.toList());

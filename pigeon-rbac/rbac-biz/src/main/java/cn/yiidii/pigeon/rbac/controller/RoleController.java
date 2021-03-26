@@ -89,7 +89,7 @@ public class RoleController {
     @PreAuthorize("@pms.hasPermission('sys:role:bindResource')")
     public R bindResource(@RequestBody RoleResourceForm roleResourceForm) {
         roleService.bindResource(roleResourceForm);
-        return R.ok(null, "绑定菜单成功");
+        return R.ok(null, "绑定菜单权限成功");
     }
 
     @DeleteMapping("/delBatch")
