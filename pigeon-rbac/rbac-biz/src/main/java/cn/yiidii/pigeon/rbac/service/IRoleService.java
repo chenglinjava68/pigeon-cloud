@@ -7,9 +7,8 @@ import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
-import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleResourceForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
-import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -99,10 +98,10 @@ public interface IRoleService extends IService<Role> {
     void bindUser(RoleUserForm roleUserForm);
 
     /**
-     * 绑定菜单
-     * @param roleMenuForm
+     * 绑定菜单权限
+     * @param roleResourceForm
      */
-    void bindMenu(RoleMenuForm roleMenuForm);
+    void bindResource(RoleResourceForm roleResourceForm);
 
     /**
      * 删除角色

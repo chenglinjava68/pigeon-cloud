@@ -7,9 +7,8 @@ import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
-import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleResourceForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
-import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -20,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Permissions;
 import java.util.List;
 
 /**
@@ -86,11 +84,11 @@ public class RoleController {
         return R.ok(null, "绑定用户成功");
     }
 
-    @PostMapping("/bindMenu")
-    @ApiOperation(value = "绑定菜单")
-    @PreAuthorize("@pms.hasPermission('sys:role:bindMenu')")
-    public R bindMenu(@RequestBody RoleMenuForm roleMenuForm) {
-        roleService.bindMenu(roleMenuForm);
+    @PostMapping("/bindResource")
+    @ApiOperation(value = "绑定菜单权限")
+    @PreAuthorize("@pms.hasPermission('sys:role:bindResource')")
+    public R bindResource(@RequestBody RoleResourceForm roleResourceForm) {
+        roleService.bindResource(roleResourceForm);
         return R.ok(null, "绑定菜单成功");
     }
 

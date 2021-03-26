@@ -6,15 +6,13 @@ import cn.yiidii.pigeon.common.core.base.entity.TreeEntity;
 import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
-import cn.yiidii.pigeon.common.core.util.TreeUtil;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.*;
 import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
-import cn.yiidii.pigeon.rbac.api.form.RoleMenuForm;
+import cn.yiidii.pigeon.rbac.api.form.RoleResourceForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
-import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
 import cn.yiidii.pigeon.rbac.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -202,15 +200,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void bindMenu(RoleMenuForm roleMenuForm) {
-        Long roleId = roleMenuForm.getRoleId();
+    public void bindResource(RoleResourceForm roleResourceForm) {
+        Long roleId = roleResourceForm.getRoleId();
         Role roleExist = this.getById(roleId);
         if (Objects.isNull(roleExist)) {
             throw new BizException(StrUtil.format("角色ID[{}]不存在", roleId));
         }
         // 先删除角色下的菜单
         roleResourceService.remove(Wrappers.<RoleResource>lambdaQuery().eq(RoleResource::getRoleId, roleId).eq(RoleResource::getType, ResourceType.MENU));
-        List<Long> resourceIdList = roleMenuForm.getMenuIdList();
+        List<Long> resourceIdList = roleResourceForm.getMenuIdList();
         List<RoleResource> roleResourceList = resourceIdList.stream().map(resId -> RoleResource.builder()
                 .roleId(roleId)
                 .resourceId(resId)
