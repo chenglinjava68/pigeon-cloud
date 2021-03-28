@@ -83,7 +83,7 @@ public class OauthController {
     @SneakyThrows
     public void login(@PathVariable("source") String source, AuthCallback callback, HttpServletResponse httpServletResponse) {
         // 跳转到指定页面
-        String url = socialConfig.getUrl() + "?source=" + source + "&code=" + callback.getCode() + "&state=" + callback.getState();
+        String url = socialConfig.getUrl() + "&source=" + source + "&code=" + callback.getCode() + "&state=" + callback.getState();
         httpServletResponse.sendRedirect(url);
     }
 
