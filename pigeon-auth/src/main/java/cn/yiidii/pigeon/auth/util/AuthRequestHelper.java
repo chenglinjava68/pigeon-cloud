@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import me.zhyd.oauth.config.AuthConfig;
+import me.zhyd.oauth.enums.scope.AuthGiteeScope;
 import me.zhyd.oauth.enums.scope.AuthGithubScope;
 import me.zhyd.oauth.exception.AuthException;
+import me.zhyd.oauth.request.AuthGiteeRequest;
 import me.zhyd.oauth.request.AuthGithubRequest;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.utils.AuthScopeUtils;
@@ -39,8 +41,7 @@ public class AuthRequestHelper {
         AuthRequest authRequest = null;
 
         switch (source.toLowerCase()) {
-            case "github":
-            case "gitee":
+            case "github": {
                 authRequest = new AuthGithubRequest(AuthConfig.builder()
                         .clientId(authProperties.getGithub().getClientId())
                         .clientSecret(authProperties.getGithub().getClientSecret())
@@ -48,6 +49,15 @@ public class AuthRequestHelper {
                         .scopes(AuthScopeUtils.getScopes(AuthGithubScope.values()))
                         .build());
                 break;
+            }
+            case "gitee": {
+                authRequest = new AuthGiteeRequest(AuthConfig.builder()
+                        .clientId(authProperties.getGitee().getClientId())
+                        .clientSecret(authProperties.getGitee().getClientSecret())
+                        .redirectUri(authProperties.getGitee().getRedirectUri())
+                        .scopes(AuthScopeUtils.getScopes(AuthGiteeScope.USER_INFO))
+                        .build());
+            }
             default:
                 break;
         }

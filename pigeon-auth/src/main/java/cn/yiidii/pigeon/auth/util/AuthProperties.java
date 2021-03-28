@@ -16,10 +16,16 @@ import org.springframework.context.annotation.Configuration;
 public class AuthProperties {
 
     private Github github;
+    private Gitee gitee;
 
     @Getter
     @Setter
     static class Github extends SuperAuthType {
+    }
+
+    @Getter
+    @Setter
+    static class Gitee extends SuperAuthType {
     }
 
 }
