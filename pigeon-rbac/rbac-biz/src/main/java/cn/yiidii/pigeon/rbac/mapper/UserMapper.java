@@ -1,7 +1,6 @@
 package cn.yiidii.pigeon.rbac.mapper;
 
 import cn.yiidii.pigeon.rbac.api.bo.UserBO;
-import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

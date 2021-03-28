@@ -1,14 +1,18 @@
 package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.service.IUserService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -24,6 +28,7 @@ import javax.validation.constraints.NotBlank;
 @Slf4j
 public class UserAnnoController {
     private final IUserService userService;
+    private final DozerUtils dozerUtils;
 
     @GetMapping("/info/{username}")
     @ApiIgnore
@@ -32,11 +37,17 @@ public class UserAnnoController {
         return R.ok(userDTO);
     }
 
+    @GetMapping("/getUserDTOByPlatform")
+    @ApiIgnore
+    private R<UserDTO> getUserDTOByPlatform(@RequestParam @NotBlank(message = "平台名称不能为空") String platformName, @RequestParam @NotBlank(message = "uuid不能为空") String uuid) {
+        return R.ok(userService.getUserDTOByPlatform(platformName, uuid));
+    }
+
     @PostMapping("/create")
     @ApiOperation(value = "创建用户")
-    private R<UserDTO> create(@RequestBody UserDTO userDTO) {
-        User user = userService.create(userDTO);
-        BeanUtils.copyProperties(user, userDTO);
-        return R.ok(userDTO);
+    public R<cn.yiidii.pigeon.rbac.api.vo.UserVO> create(@Validated @RequestBody UserForm userForm) {
+        Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
+        User user = userService.create(userForm);
+        return R.ok(dozerUtils.map(user, cn.yiidii.pigeon.rbac.api.vo.UserVO.class));
     }
 }

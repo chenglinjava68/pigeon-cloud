@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.api.entity;
 
 import cn.yiidii.pigeon.common.core.base.entity.Entity;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
+import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -65,6 +66,8 @@ public class User extends Entity<Long> {
 
     private Boolean isDefault;
 
-    private Integer source;
+    private UserSource source;
+
+    private String uuid;
 
 }

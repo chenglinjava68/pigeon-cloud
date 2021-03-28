@@ -1,7 +1,5 @@
 package cn.yiidii.pigeon.rbac.api.feign.factory;
 
-import cn.yiidii.pigeon.common.core.base.R;
-import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import cn.yiidii.pigeon.rbac.api.feign.fallback.UserFeignFallBack;
 import feign.hystrix.FallbackFactory;

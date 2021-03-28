@@ -17,12 +17,11 @@ import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.*;
 import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
+import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
-import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
 import cn.yiidii.pigeon.rbac.service.*;
-import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -93,6 +92,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             userDTO.setPermissions(new ArrayList<>());
         }
         return userDTO;
+    }
+
+    /**
+     * 根据平台和uuid获取用户
+     *
+     * @param platformName
+     * @param uuid
+     * @return
+     */
+    @Override
+    public UserDTO getUserDTOByPlatform(String platformName, String uuid) {
+        UserSource source = UserSource.get(platformName);
+        if (Objects.isNull(source)) {
+            throw new BizException(StrUtil.format("不支持的平台({})", platformName));
+        }
+
+        User user = this.lambdaQuery().eq(User::getSource, source).eq(User::getUuid, uuid).one();
+        if (Objects.isNull(user)) {
+            throw new BizException("用户不存在");
+        }
+
+        return this.getUserDTOByUsername(user.getUsername());
     }
 
     @Override
@@ -175,7 +196,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public IPage<UserVO> list(BaseSearchParam searchParam) {
+    public IPage<cn.yiidii.pigeon.rbac.api.vo.UserVO> list(BaseSearchParam searchParam) {
         LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), User::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
@@ -190,7 +211,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 分页查询
         Page<User> page = new Page<>(searchParam.getCurrent(), searchParam.getSize());
         IPage<User> userPage = this.baseMapper.selectPage(page, queryWrapper);
-        return userPage.convert(user -> BeanUtil.copyProperties(user, UserVO.class));
+        return userPage.convert(user -> BeanUtil.copyProperties(user, cn.yiidii.pigeon.rbac.api.vo.UserVO.class));
     }
 
     @Override

@@ -49,7 +49,7 @@ public class UserController {
     public R<UserVO> create(@Validated @RequestBody UserForm userForm) {
         Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
         User user = userService.create(userForm);
-        return R.ok(dozerUtils.map(user, UserVO.class));
+        return R.ok(dozerUtils.map(user, cn.yiidii.pigeon.rbac.api.vo.UserVO.class));
     }
 
     @PutMapping("/{id}")
@@ -75,7 +75,7 @@ public class UserController {
         UserDTO userDTO = userService.getUserDTOByUsername(principal.toString());
         List<PermissionDTO> permissionDTOList = userDTO.getPermissions();
 
-        UserVO userVO = dozerUtils.map(userDTO, UserVO.class);
+        cn.yiidii.pigeon.rbac.api.vo.UserVO userVO = dozerUtils.map(userDTO, cn.yiidii.pigeon.rbac.api.vo.UserVO.class);
         if (!CollectionUtils.isEmpty(permissionDTOList)) {
             userVO.setPermissions(permissionDTOList.stream().map(PermissionDTO::getCode).collect(Collectors.toList()));
         }
@@ -90,7 +90,7 @@ public class UserController {
 
     @GetMapping("/list")
     @ApiOperation(value = "用户列表", notes = "需要登陆，且需要[user]权限")
-    public R<IPage<UserVO>> list(BaseSearchParam searchParam) {
+    public R<IPage<cn.yiidii.pigeon.rbac.api.vo.UserVO>> list(BaseSearchParam searchParam) {
         return R.ok(userService.list(searchParam));
     }
 

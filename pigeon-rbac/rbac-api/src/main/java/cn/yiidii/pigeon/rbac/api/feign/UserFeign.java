@@ -4,11 +4,10 @@ import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.constant.ServiceNameConstant;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.factory.UserFeignFallbackFactory;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * rbac-用户远程调用
@@ -30,7 +29,22 @@ public interface UserFeign {
     @GetMapping("/user-anno/info/{username}")
     R<UserDTO> getUserDTOByUsername(@PathVariable("username") String username);
 
+    /**
+     * 通过平台获取用户
+     *
+     * @param platformName      用户名
+     * @param uuid              uuid
+     * @return
+     */
+    @GetMapping("/user-anno/getUserDTOByPlatform")
+    R<UserDTO> getUserDTOByPlatform(@RequestParam("platformName") String platformName, @RequestParam("uuid") String uuid);
+
+    /**
+     * 创建用户
+     * @param userForm
+     * @return
+     */
     @PostMapping("/user-anno/create")
-    R<UserDTO> create(@RequestBody UserDTO userDTO);
+    R<UserVO> create(@RequestBody UserForm userForm);
 
 }

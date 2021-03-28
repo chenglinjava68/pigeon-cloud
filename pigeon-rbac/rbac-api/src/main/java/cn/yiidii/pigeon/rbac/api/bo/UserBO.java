@@ -3,6 +3,7 @@ package cn.yiidii.pigeon.rbac.api.bo;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
+import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,10 @@ public class UserBO {
     private LocalDateTime lastLoginTime;
 
     private Boolean isDefault;
+
+    private UserSource userSource;
+
+    private String uuid;
 
     /**
      * 角色

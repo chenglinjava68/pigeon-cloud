@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.api.form;
 
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
+import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -54,4 +55,7 @@ public class UserForm {
 
     private String desc;
 
+    private UserSource source;
+
+    private String uuid;
 }

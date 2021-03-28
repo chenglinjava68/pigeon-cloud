@@ -5,6 +5,9 @@ import cn.yiidii.pigeon.auth.service.IThirdPartyService;
 import cn.yiidii.pigeon.auth.util.AuthRequestHelper;
 import cn.yiidii.pigeon.common.core.util.SpringContextHolder;
 import cn.yiidii.pigeon.common.security.service.PigeonUserDetailsService;
+import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
+import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
 import lombok.Setter;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
@@ -34,6 +37,7 @@ public class SocialAuthenticationProvider implements AuthenticationProvider {
         String state = authenticationToken.getState();
 
         AuthRequestHelper authRequestHelper = SpringContextHolder.getBean(AuthRequestHelper.class);
+        UserFeign userFeign = SpringContextHolder.getBean(UserFeign.class);
         IThirdPartyService thirdPartyService = SpringContextHolder.getBean(IThirdPartyService.class);
 
         // 构建请求，不支持则抛异常
@@ -49,8 +53,8 @@ public class SocialAuthenticationProvider implements AuthenticationProvider {
             throw new InternalAuthenticationServiceException(StrUtil.format("社交[{}]登录失败", source));
         }
 
-        // 暂时用loadUserByUsername，过后改成source + uuid的形式
-        UserDetails user = userDetailsService.loadUserByUsername(authUser.getUsername());
+        UserDTO userDTO = userFeign.getUserDTOByPlatform(authUser.getSource(), authUser.getUuid()).getData();
+        UserDetails user = userDetailsService.loadUserByUsername(userDTO.getUsername());
         if (user == null) {
             throw new InternalAuthenticationServiceException(StrUtil.format("社交[{}]登录失败: {}", source, "添加用户失败"));
         }

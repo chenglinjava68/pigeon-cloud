@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.api.vo;
 
 import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
+import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -66,6 +67,8 @@ public class UserVO implements Serializable {
     private Long createdBy;
 
     private Boolean isDefault;
+
+    private UserSource source;
 
     private List<String> permissions;
 }

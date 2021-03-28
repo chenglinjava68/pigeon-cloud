@@ -1,6 +1,5 @@
 package cn.yiidii.pigeon.auth.service;
 
-import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import me.zhyd.oauth.model.AuthUser;
 
 /**
@@ -15,12 +14,5 @@ public interface IThirdPartyService {
      * @return
      */
     void handle(AuthUser authUser);
-
-    /**
-     * 保存用户
-     * @param authUser
-     * @return
-     */
-    UserDTO save(AuthUser authUser);
 
 }
