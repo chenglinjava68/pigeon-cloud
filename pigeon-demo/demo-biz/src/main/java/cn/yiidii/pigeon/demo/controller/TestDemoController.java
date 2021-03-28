@@ -13,6 +13,8 @@ import cn.yiidii.pigeon.demo.mapper.DemoMapper;
 import cn.yiidii.pigeon.demo.message.producer.IMailProducer;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
+import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import com.alibaba.fastjson.JSONObject;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -206,10 +208,8 @@ public class TestDemoController {
         }
 
         // wangyidi用户已存在，会抛出异常
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(String.valueOf(new Random().nextInt()));
-        userDTO.setPassword("11");
-        R<UserDTO> userDTOR = userFeign.create(userDTO);
+        UserForm form = UserForm.builder().username(String.valueOf(new Random().nextInt())).password("111").build();
+        R<UserVO> userDTOR = userFeign.create(form);
         log.info("userDTOR: {}", JSONObject.toJSON(userDTOR));
         if (userDTOR.getCode() != 0) {
             /*
