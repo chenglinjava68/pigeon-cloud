@@ -1,19 +1,16 @@
 package cn.yiidii.pigeon.auth.endpoint;
 
-import cn.yiidii.pigeon.auth.service.IThirdPartyService;
+import cn.yiidii.pigeon.auth.config.SocialConfig;
 import cn.yiidii.pigeon.auth.util.AuthRequestHelper;
 import cn.yiidii.pigeon.common.core.base.R;
-import cn.yiidii.pigeon.common.core.exception.code.ExceptionCode;
-import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthCallback;
-import me.zhyd.oauth.model.AuthResponse;
-import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.utils.AuthStateUtils;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -22,11 +19,9 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,7 +37,7 @@ public class OauthController {
 
     private final TokenEndpoint tokenEndpoint;
     private final AuthRequestHelper authRequestHelper;
-    private final IThirdPartyService thirdPartyService;
+    private final SocialConfig socialConfig;
 
     /**
      * 重写token接口
@@ -63,21 +58,7 @@ public class OauthController {
             @ApiImplicitParam(name = "password", value = "密码", required = false, paramType = "query", dataType = "String", defaultValue = "")
     })
     public R<OAuth2AccessToken> postAccessToken(Principal principal,
-                                                @RequestParam String client_id,
-                                                @RequestParam String client_secret,
-                                                @RequestParam String grant_type,
-                                                @RequestParam(required = false) String code,
-                                                @RequestParam(required = false) String redirect_uri,
-                                                @RequestParam(required = false) String username,
-                                                @RequestParam(required = false) String password) throws HttpRequestMethodNotSupportedException {
-        Map<String, String> params = new HashMap<>(16);
-        params.put("client_id", client_id);
-        params.put("client_secret", client_secret);
-        params.put("grant_type", grant_type);
-        params.put("code", code);
-        params.put("redirect_uri", redirect_uri);
-        params.put("username", username);
-        params.put("password", password);
+                                                @RequestParam Map<String, String> params) throws HttpRequestMethodNotSupportedException {
         OAuth2AccessToken accessToken = tokenEndpoint.postAccessToken(principal, params).getBody();
         return R.ok(accessToken);
     }
@@ -99,15 +80,11 @@ public class OauthController {
      */
     @RequestMapping("/callback/{source}")
     @ApiIgnore
-    public R login(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request) {
-        AuthRequest authRequest = authRequestHelper.getAuthRequest(source);
-        AuthResponse<AuthUser> response = authRequest.login(callback);
-
-        if (response.ok()) {
-            OAuth2AccessToken token = thirdPartyService.handle(response.getData());
-            return R.ok(token);
-        }
-        return R.failed(ExceptionCode.THIRD_PARTY_LOGIN.getCode(), ExceptionCode.THIRD_PARTY_LOGIN.getMsg(), response.getMsg());
+    @SneakyThrows
+    public void login(@PathVariable("source") String source, AuthCallback callback, HttpServletResponse httpServletResponse) {
+        // 跳转到指定页面
+        String url = socialConfig.getUrl() + "?source=" + source + "&code=" + callback.getCode() + "&state=" + callback.getState();
+        httpServletResponse.sendRedirect(url);
     }
 
 }

@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.auth.config;
 
+import cn.yiidii.pigeon.auth.granter.social.SocialAuthenticationGranter;
 import cn.yiidii.pigeon.common.security.config.TokenStoreConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,16 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.CompositeTokenGranter;
+import org.springframework.security.oauth2.provider.TokenGranter;
+import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter;
+import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
+import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
@@ -26,7 +34,9 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * AuthorizationServerConfig
@@ -89,16 +99,18 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
-                //密码模式需要
+                // 密码模式需要
                 .authenticationManager(authenticationManager)
-                //授权码需要
+                // 授权码需要
                 .authorizationCodeServices(authorizationCodeServices)
-                //自己配置的令牌管理
+                // 自己配置的令牌管理
                 .tokenServices(tokenServices())
                 // 访问端点映射
                 .pathMapping("/oauth/confirm_access", "/custom/confirm_access")
-                //允许get，post请求获取 token,及访问端点 oauth/token
-                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+                // 允许get，post请求获取 token,及访问端点 oauth/token
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
+                // 支持的granter
+                .tokenGranter(getSupportedGranters(endpoints));
     }
 
     /**
@@ -143,6 +155,49 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public AuthorizationCodeServices authorizationCodeServices(DataSource dataSource) {
         return new JdbcAuthorizationCodeServices(dataSource);
+    }
+
+    /**
+     * 配置支持的gtanter
+     * @param endpoints
+     * @return
+     */
+    private CompositeTokenGranter getSupportedGranters(AuthorizationServerEndpointsConfigurer endpoints) {
+        List<TokenGranter> list = new ArrayList<>();
+        // 授权码模式
+        list.add(new AuthorizationCodeTokenGranter(
+                endpoints.getTokenServices(),
+                endpoints.getAuthorizationCodeServices(),
+                endpoints.getClientDetailsService(),
+                endpoints.getOAuth2RequestFactory()));
+        // 简化模式
+        list.add(new ImplicitTokenGranter(
+                endpoints.getTokenServices(),
+                endpoints.getClientDetailsService(),
+                endpoints.getOAuth2RequestFactory()));
+
+        // 客户端模式
+        list.add(new ClientCredentialsTokenGranter(endpoints.getTokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory()));
+
+        // 刷新token模式
+        list.add(new RefreshTokenGranter
+                (endpoints.getTokenServices(),
+                        endpoints.getClientDetailsService(),
+                        endpoints.getOAuth2RequestFactory()));
+
+        // 密码模式 和 社交登录模式
+        if (authenticationManager != null) {
+            list.add(new ResourceOwnerPasswordTokenGranter(authenticationManager,
+                    endpoints.getTokenServices(),
+                    endpoints.getClientDetailsService(),
+                    endpoints.getOAuth2RequestFactory()));
+            list.add(new SocialAuthenticationGranter(authenticationManager,
+                    endpoints.getTokenServices(),
+                    endpoints.getClientDetailsService(),
+                    endpoints.getOAuth2RequestFactory()));
+        }
+
+        return new CompositeTokenGranter(list);
     }
 
 }

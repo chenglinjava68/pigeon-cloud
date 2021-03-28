@@ -2,7 +2,6 @@ package cn.yiidii.pigeon.auth.service;
 
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import me.zhyd.oauth.model.AuthUser;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 /**
  * @author: YiiDii Wang
@@ -11,12 +10,11 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 public interface IThirdPartyService {
 
     /**
-     * 处理登录逻辑<br />
-     * 用户不存在，则新增用户，再登陆；用户存在，直接登录，返回token
+     * 处理用户，根据第三方的数据生成平台用户
      * @param authUser
      * @return
      */
-    OAuth2AccessToken handle(AuthUser authUser);
+    void handle(AuthUser authUser);
 
     /**
      * 保存用户
