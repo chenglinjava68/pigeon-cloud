@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.api.bo;
 
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.rbac.api.dto.RoleDTO;
 import cn.yiidii.pigeon.rbac.api.entity.RoleResource;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
@@ -42,7 +43,9 @@ public class UserBO {
 
     private Boolean isDefault;
 
-    private UserSource userSource;
+    private Status status;
+
+    private UserSource source;
 
     private String uuid;
 

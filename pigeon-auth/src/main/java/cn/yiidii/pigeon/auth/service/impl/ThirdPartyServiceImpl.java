@@ -63,7 +63,7 @@ public class ThirdPartyServiceImpl implements IThirdPartyService {
                 .confirmPassword(username)
                 .name(StringUtils.isNotBlank(nickname) ? nickname : username)
                 .sex(Sex.N)
-                .avatar(authUser.getAvatar())
+                .avatar(StringUtils.isNotBlank(authUser.getAvatar()) ? authUser.getAvatar() : "https://blog-bucket.yiidii.cn/2020-10/empry-avatar.svg")
                 .desc("")
                 .email(authUser.getEmail())
                 .source(UserSource.get(authUser.getSource()))

@@ -32,6 +32,9 @@
         <result column="password" property="mobile"/>
         <result column="sex" property="sex" javaType="cn.yiidii.pigeon.rbac.api.enumeration.Sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <result column="avatar" property="avatar"/>
+        <result column="status" property="status"/>
+        <result column="source" property="source"/>
+        <result column="uuid" property="uuid"/>
         <result column="desc" property="desc"/>
         <result column="pwd_err_times" property="pwdErrTimes"/>
         <result column="last_pwd_err_time" property="lastPwdErrTime"/>
