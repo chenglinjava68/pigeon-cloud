@@ -3,14 +3,11 @@ package cn.yiidii.pigeon.openapi.service.impl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.http.ContentType;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
+import cn.hutool.http.HttpStatus;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.exception.BizException;
-import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
-import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
 import cn.yiidii.pigeon.openapi.model.form.TelecomLoginForm;
 import cn.yiidii.pigeon.openapi.service.ITelecomService;
 import cn.yiidii.pigeon.openapi.util.IPUtil;
@@ -47,6 +44,12 @@ public class ChinaUnicomServiceImpl implements ITelecomService {
      */
     private static final String URL_RANDOM_LOGIN = "https://m.client.10010.com/mobileService/radomLogin.htm";
 
+
+    @Override
+    public JSONObject getCaptcha() {
+        // do nothing...
+        return null;
+    }
 
     @Override
     public String sendRandomNum(TelecomLoginForm telecomLoginForm) {
@@ -98,7 +101,7 @@ public class ChinaUnicomServiceImpl implements ITelecomService {
             throw new BizException("加密出现异常");
         }
 
-        Map<String, String> params = new HashMap<>(16);
+        Map<String, Object> params = new HashMap<>(16);
         params.put("mobile", encryptMobile);
         params.put("password", encryptPwd);
         params.put("loginStyle", "0");
@@ -124,26 +127,19 @@ public class ChinaUnicomServiceImpl implements ITelecomService {
             params.put("imageID", imageId);
             params.put("code", "7");
         }
+        HttpResponse resp = HttpRequest.post(URL_RANDOM_LOGIN)
+                .header("User-Agent", "")
+                .form(params)
+                .execute();
 
-        HttpClientResult loginResp = null;
-        try {
-            loginResp = HttpClientUtil.doWWWFormUrlEncodePost(URL_RANDOM_LOGIN, null, params);
-        } catch (Exception e) {
-            throw new BizException("登陆异常: " + e.getMessage());
-        }
 
         // 解析响应
-        int code = loginResp.getCode();
-        if (code != 200) {
-            throw new BizException(String.format("登陆失败(%s)", code));
+        int status = resp.getStatus();
+        if (status != HttpStatus.HTTP_OK) {
+            throw new BizException(String.format("登陆失败(%s)", status));
         }
 
-        JSONObject loginRespJo = null;
-        try {
-            loginRespJo = JSONObject.parseObject(loginResp.getContent());
-        } catch (Exception e) {
-            throw new BizException("请求验证码失败");
-        }
+        JSONObject loginRespJo = JSONObject.parseObject(resp.body());
         String rspCode = loginRespJo.getString("code");
         String rspDesc = loginRespJo.getString("dsc");
         if (StringUtils.equals(rspCode, "7")) {
@@ -155,8 +151,7 @@ public class ChinaUnicomServiceImpl implements ITelecomService {
         }
         JSONObject resultJo = new JSONObject();
         resultJo.put("chinaUnicomResp", loginRespJo);
-        resultJo.put("cookieStr", loginResp.getCookieStr());
-        resultJo.put("cookieMap", loginResp.getCookieMap());
+        resultJo.put("cookieStr", resp.getCookieStr());
         return R.ok(resultJo, "登陆成功");
     }
 
@@ -166,53 +161,6 @@ public class ChinaUnicomServiceImpl implements ITelecomService {
         form.setPassword("0123");
         form.setType(2);
         System.out.println(new ChinaUnicomServiceImpl(new IPUtil()).randomLogin(form));
-
-//        test();
-    }
-
-    public static void test() {
-        String mobile = "15688815800";
-        String password = "0000";
-        // 随机数
-        int randomSixCode = RandomUtil.randomInt(100000, 1000000);
-        String encryptMobile = null;
-        String encryptPwd = null;
-        try {
-            encryptMobile = RSAUtil.encryptByPubKey(mobile + randomSixCode, CHINA_UNICOM_PUBLIC_KEY);
-            encryptPwd = RSAUtil.encryptByPubKey(password + randomSixCode, CHINA_UNICOM_PUBLIC_KEY);
-        } catch (Exception e) {
-            throw new BizException("加密出现异常");
-        }
-
-        String imei = "7865969553f94e9c9fe6654e89cbefc0";
-
-        Map<String, Object> params = new HashMap<>(16);
-        params.put("mobile", encryptMobile);
-        params.put("password", encryptPwd);
-        params.put("loginStyle", "0");
-        params.put("isRemberPwd", "false");
-        params.put("provinceChanel", "general");
-        params.put("timestamp", DateUtil.format(new Date(), DatePattern.PURE_DATETIME_FORMAT));
-        params.put("yw_code", "");
-        params.put("deviceOS", "android10");
-        params.put("netWay", "WIFI");
-        params.put("deviceCode", imei);
-        params.put("version", "android@7.0601");
-        params.put("deviceId", imei);
-        params.put("keyVersion", "");
-        params.put("pip", new IPUtil().getRandomIp());
-        params.put("voice_code", "");
-        params.put("appId", "ChinaunicomMobileBusiness");
-        params.put("voiceoff_flag", "");
-        params.put("deviceModel", "OnePlus");
-        params.put("deviceBrand", "ONEPLUS A6000");
-        HttpRequest request = HttpRequest.post(URL_RANDOM_LOGIN).form(params).header("Content-Type", ContentType.FORM_URLENCODED.getValue());
-        String url = request.getUrl();
-        System.out.println(url);
-        HttpResponse response = request.execute();
-
-        System.out.println(response.getStatus() + " : " + response.body());
-
     }
 
 }
