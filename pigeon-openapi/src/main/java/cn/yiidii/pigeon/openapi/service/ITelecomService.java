@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.openapi.service;
 
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.openapi.model.form.TelecomLoginForm;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 运营商接口
@@ -12,15 +13,26 @@ import cn.yiidii.pigeon.openapi.model.form.TelecomLoginForm;
 public interface ITelecomService {
 
     /**
-     * 发送验证码
+     * 发送图片验证码（电信需要）
+     *
+     * @return
+     */
+    JSONObject getCaptcha();
+
+    /**
+     * 发送手机验证码
+     *
+     * @param telecomLoginForm
      * @return
      */
     String sendRandomNum(TelecomLoginForm telecomLoginForm);
 
     /**
      * 验证码登陆
+     *
      * @param telecomLoginForm
+     * @return
      */
-    R randomLogin(TelecomLoginForm telecomLoginForm) ;
+    R randomLogin(TelecomLoginForm telecomLoginForm);
 
 }
