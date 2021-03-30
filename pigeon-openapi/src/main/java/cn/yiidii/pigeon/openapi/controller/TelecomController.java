@@ -27,8 +27,15 @@ import javax.validation.Valid;
 @Slf4j
 public class TelecomController {
 
+    @GetMapping("/captcha")
+    @ApiOperation(value = "获取图形验证码")
+    public R captcha(@RequestBody @Validated TelecomLoginForm telecomLoginForm) {
+        ITelecomService telecomService = SpringContextHolder.getBean(TelecomEnum.valueOf(telecomLoginForm.getType()).getProcessor(), ITelecomService.class);
+        return R.ok(telecomService.getCaptcha(), null);
+    }
+
     @PostMapping("/sendRandomNum")
-    @ApiOperation(value = "发验证码")
+    @ApiOperation(value = "发手机验证码")
     public R sendRandomNum(@RequestBody @Validated TelecomLoginForm telecomLoginForm) {
         ITelecomService telecomService = SpringContextHolder.getBean(TelecomEnum.valueOf(telecomLoginForm.getType()).getProcessor(), ITelecomService.class);
         return R.ok(null, telecomService.sendRandomNum(telecomLoginForm));
