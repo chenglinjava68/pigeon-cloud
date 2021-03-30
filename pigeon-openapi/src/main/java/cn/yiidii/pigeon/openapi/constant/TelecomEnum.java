@@ -14,7 +14,7 @@ import lombok.Getter;
 public enum  TelecomEnum {
     XXX(1, "中国移动业务", "XxxProcessor"),
     YYY(2, "中国联通业务", "chinaUnicomService"),
-    ZZZ(3, "中国电信业务", "ZzzProcessor");
+    ZZZ(3, "中国电信业务", "chinaTelecomService");
     /**
      * 业务type
      */

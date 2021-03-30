@@ -27,7 +27,7 @@ import javax.validation.Valid;
 @Slf4j
 public class TelecomController {
 
-    @GetMapping("/captcha")
+    @PostMapping("/captcha")
     @ApiOperation(value = "获取图形验证码")
     public R captcha(@RequestBody @Validated TelecomLoginForm telecomLoginForm) {
         ITelecomService telecomService = SpringContextHolder.getBean(TelecomEnum.valueOf(telecomLoginForm.getType()).getProcessor(), ITelecomService.class);
