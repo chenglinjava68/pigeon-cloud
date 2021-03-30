@@ -7,6 +7,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpStatus;
 import cn.yiidii.pigeon.common.core.base.R;
+import cn.yiidii.pigeon.common.core.constant.StringPool;
 import cn.yiidii.pigeon.common.core.exception.BizException;
 import cn.yiidii.pigeon.openapi.model.form.TelecomLoginForm;
 import cn.yiidii.pigeon.openapi.service.ITelecomService;
@@ -17,9 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.net.HttpCookie;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author: YiiDii Wang
@@ -151,7 +155,8 @@ public class ChinaUnicomServiceImpl implements ITelecomService {
         }
         JSONObject resultJo = new JSONObject();
         resultJo.put("chinaUnicomResp", loginRespJo);
-        resultJo.put("cookieStr", resp.getCookieStr());
+        String cookieStr = StringUtils.join(resp.getCookies().stream().map(e -> e.getName().concat(StringPool.EQUALS).concat(e.getValue())).collect(Collectors.toList()), "; ");
+        resultJo.put("cookieStr", cookieStr);
         return R.ok(resultJo, "登陆成功");
     }
 

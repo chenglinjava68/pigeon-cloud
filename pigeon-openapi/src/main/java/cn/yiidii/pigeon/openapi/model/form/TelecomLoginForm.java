@@ -25,7 +25,7 @@ public class TelecomLoginForm {
     /**
      * 运营商类型
      */
-    @NotNull(message = "type:请选择运营商")
+    @NotNull(message = "请选择运营商")
     @Range(min = 1, max = 3, message = "请选择运营商")
     @ApiModelProperty(value = "运营商类型")
     private Integer type;
@@ -33,7 +33,6 @@ public class TelecomLoginForm {
     /**
      * 手机号码
      */
-    @NotBlank(message = "请输入手机号码")
     @Pattern(regexp = "\\d{11}", message = "手机号码格式不正确")
     @ApiModelProperty(value = "手机号")
     private String mobile;
