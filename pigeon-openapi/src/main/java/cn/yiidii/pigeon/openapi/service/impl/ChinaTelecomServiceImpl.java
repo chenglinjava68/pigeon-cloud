@@ -163,8 +163,10 @@ public class ChinaTelecomServiceImpl implements ITelecomService {
         JSONObject respBody = JSONObject.parseObject(respStr);
         System.out.println(respBody);
         JSONObject responseData = respBody.getJSONObject("responseData");
-        if (Objects.isNull(responseData)) {
-            throw new BizException("登陆失败");
+        Object data = responseData.get("data");
+        String resultDesc = responseData.getString("resultDesc");
+        if (Objects.isNull(data)) {
+            throw new BizException(resultDesc);
         }
 
         JSONObject resultJo = new JSONObject();
