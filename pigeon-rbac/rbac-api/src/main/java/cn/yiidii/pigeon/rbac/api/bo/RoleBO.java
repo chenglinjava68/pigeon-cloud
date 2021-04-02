@@ -12,6 +12,8 @@ public class RoleBO {
 
     private String id;
 
+    private Integer orgId;
+
     private String code;
 
     private String name;

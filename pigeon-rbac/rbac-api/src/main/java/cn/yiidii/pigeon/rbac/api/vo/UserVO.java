@@ -32,6 +32,8 @@ public class UserVO implements Serializable {
     @ApiModelProperty(value = "主键")
     protected Long id;
 
+    private Long orgId;
+
     private String username;
 
     private String name;

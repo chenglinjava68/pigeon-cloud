@@ -19,6 +19,8 @@ public class UserBO {
 
     private Long id;
 
+    private Long orgId;
+
     private String username;
 
     private String password;
