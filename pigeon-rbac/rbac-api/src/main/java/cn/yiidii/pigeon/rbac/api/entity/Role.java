@@ -36,6 +36,11 @@ public class Role extends Entity<Long> {
     @Pattern(regexp = "\\w{3,20}", message = "角色编码限制3-20位，数字字母及下划线")
     private String code;
 
+    @ApiModelProperty(value = "组织ID")
+    @NotEmpty(message = "组织ID不能为空")
+    @TableField(value="org_id")
+    private Long orgId;
+
     @ApiModelProperty(value = "名称")
     @NotEmpty(message = "名称不能为空")
     @Length(max = 30, message = "名称长度不能超过30")

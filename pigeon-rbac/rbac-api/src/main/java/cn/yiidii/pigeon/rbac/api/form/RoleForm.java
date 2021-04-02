@@ -22,6 +22,10 @@ public class RoleForm {
     @NotNull(message = "角色ID不能为空",groups = SuperEntity.Update.class)
     private Long id;
 
+    @ApiModelProperty(value = "组织ID")
+    @NotNull(message = "组织ID不能为空")
+    private Long orgId;
+
     @ApiModelProperty(value = "角色编码")
     @NotEmpty(message = "角色编码不能为空")
     @Pattern(regexp = "\\w{3,20}", message = "角色编码限制3-20位，数字字母及下划线")
