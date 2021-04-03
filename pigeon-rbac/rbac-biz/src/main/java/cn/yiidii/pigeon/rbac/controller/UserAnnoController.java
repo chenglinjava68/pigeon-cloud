@@ -25,26 +25,24 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/user-anno")
 @RequiredArgsConstructor
+@ApiIgnore
 @Slf4j
 public class UserAnnoController {
     private final IUserService userService;
     private final DozerUtils dozerUtils;
 
     @GetMapping("/info/{username}")
-    @ApiIgnore
     private R<UserDTO> userInfo(@PathVariable @NotBlank(message = "用户名不能为空") String username) {
         UserDTO userDTO = userService.getUserDTOByUsername(username);
         return R.ok(userDTO);
     }
 
     @GetMapping("/getUserDTOByPlatform")
-    @ApiIgnore
     private R<UserDTO> getUserDTOByPlatform(@RequestParam @NotBlank(message = "平台名称不能为空") String platformName, @RequestParam @NotBlank(message = "uuid不能为空") String uuid) {
         return R.ok(userService.getUserDTOByPlatform(platformName, uuid));
     }
 
     @PostMapping("/create")
-    @ApiOperation(value = "创建用户")
     public R<cn.yiidii.pigeon.rbac.api.vo.UserVO> create(@Validated @RequestBody UserForm userForm) {
         Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
         User user = userService.create(userForm);

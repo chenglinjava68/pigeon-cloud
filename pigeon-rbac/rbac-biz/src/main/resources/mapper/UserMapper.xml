@@ -25,6 +25,7 @@
 
     <resultMap id="UserBOResultMap" type="cn.yiidii.pigeon.rbac.api.bo.UserBO">
         <id column="id" property="id"/>
+        <result column="org_id" property="orgId"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="name" property="name"/>

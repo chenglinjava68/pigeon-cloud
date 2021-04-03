@@ -20,4 +20,13 @@
         </field>
     </mapping>
 
+    <mapping date-format="yyyy-MM-dd HH:mm:ss">
+        <class-a>cn.yiidii.pigeon.rbac.api.entity.Org</class-a>
+        <class-b>cn.yiidii.pigeon.rbac.api.vo.OrgVO</class-b>
+        <field>
+            <a>name</a>
+            <b>label</b>
+        </field>
+    </mapping>
+
 </mappings>

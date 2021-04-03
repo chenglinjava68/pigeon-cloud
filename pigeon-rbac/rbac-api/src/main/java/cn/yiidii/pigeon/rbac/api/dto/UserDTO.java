@@ -4,6 +4,7 @@ import cn.yiidii.pigeon.rbac.api.entity.User;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Data
 @ApiModel("用户DTO")
+@EqualsAndHashCode(callSuper = true)
 public class UserDTO extends User {
 
     @ApiModelProperty(value = "确认密码")

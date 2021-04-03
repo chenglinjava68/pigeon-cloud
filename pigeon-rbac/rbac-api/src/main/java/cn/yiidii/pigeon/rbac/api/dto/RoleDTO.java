@@ -18,6 +18,9 @@ import java.io.Serializable;
 @ApiModel("角色DTO")
 public class RoleDTO implements Serializable {
 
+    @ApiModelProperty(value = "组织ID")
+    private Integer orgId;
+
     @ApiModelProperty(value = "用户编码")
     @NotEmpty(message = "用户编码不能为空")
     @Pattern(regexp = "\\w{3,20}", message = "角色编码限制3-20位，数字字母及下划线")
