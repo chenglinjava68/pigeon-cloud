@@ -19,6 +19,8 @@ import cn.yiidii.pigeon.rbac.api.entity.*;
 import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.api.form.param.UserSearchParam;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.mapper.UserMapper;
 import cn.yiidii.pigeon.rbac.service.*;
@@ -148,7 +150,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = new User();
         BeanUtils.copyProperties(userForm, user);
         user.setSalt("");
-        user.setStatus(Status.ENABLED);
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         this.save(user);
@@ -196,9 +197,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public IPage<cn.yiidii.pigeon.rbac.api.vo.UserVO> list(BaseSearchParam searchParam) {
+    public IPage<UserVO> list(UserSearchParam searchParam) {
         LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), User::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
+        queryWrapper.eq(User::getOrgId,searchParam.getOrgId())
+                .between(StringUtils.isNotBlank(searchParam.getStartTime()), User::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
         queryWrapper.like(isKeyword, User::getName, searchParam.getKeyword()).or(isKeyword)
                 .like(isKeyword, User::getId, searchParam.getKeyword())

@@ -1,6 +1,7 @@
 package cn.yiidii.pigeon.rbac.api.form;
 
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import cn.yiidii.pigeon.rbac.api.enumeration.Sex;
 import cn.yiidii.pigeon.rbac.api.enumeration.UserSource;
 import io.swagger.annotations.ApiModel;
@@ -31,6 +32,9 @@ public class UserForm {
     @NotNull(message = "用户ID不能为空", groups = SuperEntity.Update.class)
     private Long id;
 
+    @NotNull(message = "部门ID不能为空")
+    private Long orgId;
+
     @NotBlank(message = "用户名不能为空", groups = SuperEntity.Add.class)
     private String username;
 
@@ -54,6 +58,8 @@ public class UserForm {
     private String avatar;
 
     private String desc;
+
+    private Status status;
 
     private UserSource source;
 

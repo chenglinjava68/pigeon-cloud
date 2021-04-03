@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.controller;
 
+import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
@@ -9,6 +10,7 @@ import cn.yiidii.pigeon.rbac.api.dto.PermissionDTO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.api.form.param.UserSearchParam;
 import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import cn.yiidii.pigeon.rbac.service.IUserService;
@@ -49,7 +51,7 @@ public class UserController {
     public R<UserVO> create(@Validated @RequestBody UserForm userForm) {
         Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
         User user = userService.create(userForm);
-        return R.ok(dozerUtils.map(user, cn.yiidii.pigeon.rbac.api.vo.UserVO.class));
+        return R.ok(dozerUtils.map(user, cn.yiidii.pigeon.rbac.api.vo.UserVO.class), StrUtil.format("创建用户{}成功", user.getName()));
     }
 
     @PutMapping("/{id}")
@@ -75,7 +77,7 @@ public class UserController {
         UserDTO userDTO = userService.getUserDTOByUsername(principal.toString());
         List<PermissionDTO> permissionDTOList = userDTO.getPermissions();
 
-        cn.yiidii.pigeon.rbac.api.vo.UserVO userVO = dozerUtils.map(userDTO, cn.yiidii.pigeon.rbac.api.vo.UserVO.class);
+        UserVO userVO = dozerUtils.map(userDTO, cn.yiidii.pigeon.rbac.api.vo.UserVO.class);
         if (!CollectionUtils.isEmpty(permissionDTOList)) {
             userVO.setPermissions(permissionDTOList.stream().map(PermissionDTO::getCode).collect(Collectors.toList()));
         }
@@ -88,9 +90,9 @@ public class UserController {
         return R.ok(userService.getRouter(SecurityUtils.getUser().getId()));
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @ApiOperation(value = "用户列表", notes = "需要登陆，且需要[user]权限")
-    public R<IPage<cn.yiidii.pigeon.rbac.api.vo.UserVO>> list(BaseSearchParam searchParam) {
+    public R<IPage<UserVO>> list(@RequestBody @Validated UserSearchParam searchParam) {
         return R.ok(userService.list(searchParam));
     }
 

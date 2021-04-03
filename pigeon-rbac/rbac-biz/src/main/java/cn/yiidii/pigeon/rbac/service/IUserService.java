@@ -5,6 +5,8 @@ import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
+import cn.yiidii.pigeon.rbac.api.form.param.UserSearchParam;
+import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import cn.yiidii.pigeon.rbac.api.vo.VueRouter;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -89,7 +91,7 @@ public interface IUserService extends IService<User> {
      * @param searchParam
      * @return
      */
-    IPage<cn.yiidii.pigeon.rbac.api.vo.UserVO> list(BaseSearchParam searchParam);
+    IPage<UserVO> list(UserSearchParam searchParam);
 
     /**
      * 获取用户路由

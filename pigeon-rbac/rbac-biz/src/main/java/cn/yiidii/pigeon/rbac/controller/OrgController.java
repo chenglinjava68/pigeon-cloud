@@ -13,6 +13,7 @@ import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleResourceForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
+import cn.yiidii.pigeon.rbac.api.vo.OrgVO;
 import cn.yiidii.pigeon.rbac.service.IOrgService;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -40,12 +41,13 @@ import java.util.List;
 public class OrgController {
 
     private final IOrgService orgService;
+    private final DozerUtils dozerUtils;
 
     @GetMapping("tree")
     @ApiOperation(value = "组织树")
     public R orgTree() {
         List<Org> list = orgService.lambdaQuery().list();
-        return R.ok(TreeUtil.buildTree(list));
+        return R.ok(TreeUtil.buildTree(dozerUtils.mapList(list, OrgVO.class)));
     }
 
 }
