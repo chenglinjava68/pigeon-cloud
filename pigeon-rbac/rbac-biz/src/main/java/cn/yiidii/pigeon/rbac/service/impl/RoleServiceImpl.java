@@ -13,6 +13,7 @@ import cn.yiidii.pigeon.rbac.api.enumeration.ResourceType;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleResourceForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
+import cn.yiidii.pigeon.rbac.api.form.param.RoleSearchParam;
 import cn.yiidii.pigeon.rbac.mapper.RoleMapper;
 import cn.yiidii.pigeon.rbac.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -116,9 +117,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public IPage<Role> list(BaseSearchParam searchParam) {
+    public IPage<Role> list(RoleSearchParam searchParam) {
         LambdaQueryWrapper<Role> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.between(StringUtils.isNotBlank(searchParam.getStartTime()), Role::getCreateTime, searchParam.getStartTime(), searchParam.getEndTime());
+        queryWrapper.eq(Role::getOrgId, searchParam.getOrgId());
         boolean isKeyword = StringUtils.isNotBlank(searchParam.getKeyword());
         queryWrapper.like(isKeyword, Role::getName, searchParam.getKeyword()).or(isKeyword)
                 .like(isKeyword, Role::getId, searchParam.getKeyword())

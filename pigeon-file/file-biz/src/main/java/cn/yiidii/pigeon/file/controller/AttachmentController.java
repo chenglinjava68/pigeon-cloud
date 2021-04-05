@@ -6,7 +6,6 @@ import cn.yiidii.pigeon.common.core.constant.StringPool;
 import cn.yiidii.pigeon.file.api.entity.Attachment;
 import cn.yiidii.pigeon.file.properties.OssProperties;
 import cn.yiidii.pigeon.file.service.IAttachmentService;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

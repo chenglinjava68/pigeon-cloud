@@ -1,6 +1,7 @@
 package cn.yiidii.pigeon.rbac.api.form;
 
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
+import cn.yiidii.pigeon.common.core.base.enumeration.Status;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -40,4 +41,5 @@ public class RoleForm {
     @NotEmpty(message = "描述不能为空")
     private String desc;
 
+    private Status status;
 }

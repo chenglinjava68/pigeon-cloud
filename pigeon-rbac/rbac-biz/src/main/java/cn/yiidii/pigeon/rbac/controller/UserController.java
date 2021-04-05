@@ -1,7 +1,6 @@
 package cn.yiidii.pigeon.rbac.controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;

@@ -1,6 +1,5 @@
 package cn.yiidii.pigeon.rbac.controller;
 
-import cn.yiidii.pigeon.common.core.base.BaseSearchParam;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.*;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
@@ -9,6 +8,7 @@ import cn.yiidii.pigeon.rbac.api.entity.Role;
 import cn.yiidii.pigeon.rbac.api.form.RoleForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleResourceForm;
 import cn.yiidii.pigeon.rbac.api.form.RoleUserForm;
+import cn.yiidii.pigeon.rbac.api.form.param.RoleSearchParam;
 import cn.yiidii.pigeon.rbac.service.IRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -52,9 +52,9 @@ public class RoleController {
         return R.ok(null, update ? "更新角色成功" : "更新角色失败");
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @ApiOperation(value = "角色列表")
-    public R<IPage<Role>> list(BaseSearchParam searchParam) {
+    public R<IPage<Role>> list(@Validated @RequestBody RoleSearchParam searchParam) {
         return R.ok(roleService.list(searchParam));
     }
 
