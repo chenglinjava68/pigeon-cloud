@@ -11,6 +11,8 @@ import cn.yiidii.pigeon.demo.api.dto.EmailDTO;
 import cn.yiidii.pigeon.demo.api.entity.Demo;
 import cn.yiidii.pigeon.demo.mapper.DemoMapper;
 import cn.yiidii.pigeon.demo.message.producer.IMailProducer;
+import cn.yiidii.pigeon.kafka.channel.LogChannel;
+import cn.yiidii.pigeon.kafka.constant.KafkaConstant;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
@@ -26,7 +28,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.core.env.Environment;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -48,16 +53,12 @@ import java.util.Random;
 public class TestDemoController {
 
     private final UserFeign userFeign;
-
     private final RedisOps redisOps;
-
     private final Environment env;
-
     private final DemoMapper demoMapper;
-
     private final MailTemplate mailTemplate;
-
     private final IMailProducer mailProducer;
+    private final LogChannel logChannel;
 
     @GetMapping("/test/hello")
     @ApiOperation(value = "测试hello接口")
@@ -235,6 +236,18 @@ public class TestDemoController {
     public R<String> rabbit(@RequestBody EmailDTO emailDTO) {
         mailProducer.testSendEmail(emailDTO);
         return R.ok(null, "发送消息成功");
+    }
+
+    @GetMapping("/test/kafka")
+    @ApiOperation(value = "测试kafka消息")
+    public R<String> kafka(@RequestParam String message) {
+        logChannel.sendLogMessage().send(MessageBuilder.withPayload(message).build());
+        return R.ok(null, "发送kafka消息成功");
+    }
+
+    @StreamListener(KafkaConstant.LOG_INPUT)
+    public void handler(String message) {
+        log.info(String.format("consume: %s", message) + ",receive time:" + System.nanoTime());
     }
 
 }
