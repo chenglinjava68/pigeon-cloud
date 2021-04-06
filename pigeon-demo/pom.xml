@@ -26,6 +26,11 @@
             <artifactId>pigeon-core</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-log</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>

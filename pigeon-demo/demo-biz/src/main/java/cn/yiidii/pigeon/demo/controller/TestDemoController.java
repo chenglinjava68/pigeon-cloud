@@ -14,6 +14,7 @@ import cn.yiidii.pigeon.demo.mapper.DemoMapper;
 import cn.yiidii.pigeon.demo.message.producer.IMailProducer;
 import cn.yiidii.pigeon.kafka.channel.LogChannel;
 import cn.yiidii.pigeon.kafka.constant.KafkaConstant;
+import cn.yiidii.pigeon.log.annotation.Log;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
@@ -35,6 +36,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -42,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: YiiDii Wang
@@ -252,4 +255,15 @@ public class TestDemoController {
         log.info(StrUtil.format("消费: {}, 接收时间: {}", message, new Date()));
     }
 
+
+    @GetMapping("/test/log")
+    @ApiOperation(value = "测试操作日志")
+    @SneakyThrows
+    @Log(value = "测试操作日志", exception = "测试操作日志异常")
+    public R<String> log(@RequestParam(required = false, defaultValue = "false") Boolean ex,
+                         @RequestParam(required = false, defaultValue = "0") Long sec) {
+        Assert.isTrue(!ex, "异常");
+        TimeUnit.SECONDS.sleep(sec);
+        return R.ok(null, StrUtil.format("测试操作日志成功"));
+    }
 }
