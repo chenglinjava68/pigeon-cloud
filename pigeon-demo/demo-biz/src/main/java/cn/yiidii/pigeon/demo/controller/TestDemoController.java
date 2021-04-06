@@ -259,8 +259,9 @@ public class TestDemoController {
     @GetMapping("/test/log")
     @ApiOperation(value = "测试操作日志")
     @SneakyThrows
-    @Log(value = "测试操作日志", exception = "测试操作日志异常")
-    public R<String> log(@RequestParam(required = false, defaultValue = "false") Boolean ex,
+    @Log(content = "'name: ' + #name + ', 测试操作日志'", exception = "测试操作日志异常")
+    public R<String> log(@RequestParam(required = false, defaultValue = "false") String name,
+                         @RequestParam(required = false, defaultValue = "false") Boolean ex,
                          @RequestParam(required = false, defaultValue = "0") Long sec) {
         Assert.isTrue(!ex, "异常");
         TimeUnit.SECONDS.sleep(sec);
