@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.demo.controller;
 
+import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.redis.RedisOps;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
@@ -28,16 +29,16 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.core.env.Environment;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -50,6 +51,7 @@ import java.util.Random;
 @Slf4j
 @RequiredArgsConstructor
 @Api(tags = "Demo测试接口")
+@EnableBinding(LogChannel.class)
 public class TestDemoController {
 
     private final UserFeign userFeign;
@@ -241,13 +243,13 @@ public class TestDemoController {
     @GetMapping("/test/kafka")
     @ApiOperation(value = "测试kafka消息")
     public R<String> kafka(@RequestParam String message) {
-        logChannel.sendLogMessage().send(MessageBuilder.withPayload(message).build());
-        return R.ok(null, "发送kafka消息成功");
+        boolean send = logChannel.sendLogMessage().send(MessageBuilder.withPayload(message).build());
+        return R.ok(null, StrUtil.format("发送kafka消息[{}]" + (send ? "成功" : "失败"), message));
     }
 
     @StreamListener(KafkaConstant.LOG_INPUT)
     public void handler(String message) {
-        log.info(String.format("consume: %s", message) + ",receive time:" + System.nanoTime());
+        log.info(StrUtil.format("消费: {}, 接收时间: {}", message, new Date()));
     }
 
 }
