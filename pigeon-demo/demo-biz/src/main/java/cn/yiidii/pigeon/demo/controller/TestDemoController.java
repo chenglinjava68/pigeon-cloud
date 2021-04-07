@@ -267,4 +267,13 @@ public class TestDemoController {
         TimeUnit.SECONDS.sleep(sec);
         return R.ok(null, StrUtil.format("测试操作日志成功"));
     }
+
+    @GetMapping("/test/trace")
+    @ApiOperation(value = "测试trace")
+    @SneakyThrows
+    public R<String> trace() {
+        R<UserDTO> admin = userFeign.getUserDTOByUsername("admin");
+        log.info("trace userDTO: {}", JSONObject.toJSON(admin));
+        return R.ok(null, StrUtil.format("tarce test"));
+    }
 }
