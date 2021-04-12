@@ -2,24 +2,25 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>pigeon-rbac</artifactId>
-    <groupId>cn.yiidii.pigeon</groupId>
-    <version>1.0.0</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>pigeon-rbac</artifactId>
+        <groupId>cn.yiidii.pigeon</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>rbac-api</artifactId>
+    <artifactId>rbac-api</artifactId>
 
-  <properties>
+    <properties>
 
-  </properties>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-feign</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>

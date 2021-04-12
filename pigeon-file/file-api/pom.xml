@@ -2,18 +2,23 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>pigeon-file</artifactId>
-    <groupId>cn.yiidii.pigeon</groupId>
-    <version>1.0.0</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>file-api</artifactId>
+    <parent>
+        <artifactId>pigeon-file</artifactId>
+        <groupId>cn.yiidii.pigeon</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>file-api</artifactId>
 
-  <properties>
-  </properties>
+    <properties>
+    </properties>
 
-  <dependencies>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-feign</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>

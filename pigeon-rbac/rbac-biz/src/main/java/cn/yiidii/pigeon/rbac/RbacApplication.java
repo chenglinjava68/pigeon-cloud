@@ -1,12 +1,12 @@
 package cn.yiidii.pigeon.rbac;
 
 import cn.yiidii.pigeon.common.core.constant.BizConstants;
+import cn.yiidii.pigeon.common.feign.annotation.EnablePigeonFeign;
 import cn.yiidii.pigeon.common.knife4j.annotation.EnablePigeonKnife4j;
 import cn.yiidii.pigeon.common.security.annotation.EnableResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -19,7 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @EnablePigeonKnife4j
 @ComponentScan({BizConstants.BUSINESS_PACKAGE})
-@EnableFeignClients(value = BizConstants.BUSINESS_PACKAGE)
+@EnablePigeonFeign
 @EnableResource
 public class RbacApplication {
 
