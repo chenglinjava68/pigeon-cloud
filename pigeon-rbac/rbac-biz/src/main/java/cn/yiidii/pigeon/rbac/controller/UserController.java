@@ -5,6 +5,7 @@ import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
+import cn.yiidii.pigeon.log.annotation.Log;
 import cn.yiidii.pigeon.rbac.api.dto.PermissionDTO;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
@@ -71,12 +72,13 @@ public class UserController {
 
     @GetMapping
     @ApiOperation(value = "获取当前用户信息")
+    @Log(content = "'获取当前用户信息'", exception = "获取当前用户信息发生异常")
     public R<UserVO> info() {
         Object principal = SecurityUtils.getAuthentication().getPrincipal();
         UserDTO userDTO = userService.getUserDTOByUsername(principal.toString());
         List<PermissionDTO> permissionDTOList = userDTO.getPermissions();
 
-        UserVO userVO = dozerUtils.map(userDTO, cn.yiidii.pigeon.rbac.api.vo.UserVO.class);
+        UserVO userVO = dozerUtils.map(userDTO, UserVO.class);
         if (!CollectionUtils.isEmpty(permissionDTOList)) {
             userVO.setPermissions(permissionDTOList.stream().map(PermissionDTO::getCode).collect(Collectors.toList()));
         }
@@ -91,6 +93,7 @@ public class UserController {
 
     @PostMapping("/list")
     @ApiOperation(value = "用户列表", notes = "需要登陆，且需要[user]权限")
+    @Log(content = "'用户列表'", exception = "用户列表异常")
     public R<IPage<UserVO>> list(@RequestBody @Validated UserSearchParam searchParam) {
         return R.ok(userService.list(searchParam));
     }

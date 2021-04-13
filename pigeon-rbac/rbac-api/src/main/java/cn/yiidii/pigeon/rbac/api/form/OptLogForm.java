@@ -2,12 +2,13 @@ package cn.yiidii.pigeon.rbac.api.form;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 系统日志DTO
@@ -17,11 +18,14 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("系统日志表单")
-@Builder
+@SuperBuilder
 @EqualsAndHashCode
 public class OptLogForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public OptLogForm() {
+    }
 
     /**
      * 日志类型
@@ -74,7 +78,6 @@ public class OptLogForm implements Serializable {
      * ip地址
      */
     @ApiModelProperty(value = "ip地址")
-    @NotBlank(message = "IP地址不能为空")
     private String ip;
 
     /**
