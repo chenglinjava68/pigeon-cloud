@@ -31,7 +31,6 @@ public class OptLogForm implements Serializable {
      * 日志类型
      */
     @ApiModelProperty(value = "日志类型")
-    @NotBlank(message = "日志类型不能为空")
     private String type;
 
     /**
@@ -44,7 +43,6 @@ public class OptLogForm implements Serializable {
      * 日志标题
      */
     @ApiModelProperty(value = "日志标题")
-    @NotBlank(message = "日志标题不能为空")
     private String title;
 
     /**

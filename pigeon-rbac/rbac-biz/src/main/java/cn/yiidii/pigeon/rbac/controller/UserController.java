@@ -72,7 +72,7 @@ public class UserController {
 
     @GetMapping
     @ApiOperation(value = "获取当前用户信息")
-    @Log(content = "'获取当前用户信息'", exception = "获取当前用户信息发生异常")
+    @Log(content = "'获取当前用户信息'", exception = "")
     public R<UserVO> info() {
         Object principal = SecurityUtils.getAuthentication().getPrincipal();
         UserDTO userDTO = userService.getUserDTOByUsername(principal.toString());

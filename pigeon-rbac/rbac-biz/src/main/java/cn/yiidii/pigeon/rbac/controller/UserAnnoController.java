@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.util.DozerUtils;
+import cn.yiidii.pigeon.log.annotation.Log;
 import cn.yiidii.pigeon.rbac.api.dto.UserDTO;
 import cn.yiidii.pigeon.rbac.api.entity.User;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
@@ -32,13 +33,13 @@ public class UserAnnoController {
     private final DozerUtils dozerUtils;
 
     @GetMapping("/info/{username}")
-    private R<UserDTO> userInfo(@PathVariable @NotBlank(message = "用户名不能为空") String username) {
+    public R<UserDTO> userInfo(@PathVariable @NotBlank(message = "用户名不能为空") String username) {
         UserDTO userDTO = userService.getUserDTOByUsername(username);
         return R.ok(userDTO);
     }
 
     @GetMapping("/getUserDTOByPlatform")
-    private R<UserDTO> getUserDTOByPlatform(@RequestParam @NotBlank(message = "平台名称不能为空") String platformName, @RequestParam @NotBlank(message = "uuid不能为空") String uuid) {
+    public R<UserDTO> getUserDTOByPlatform(@RequestParam @NotBlank(message = "平台名称不能为空") String platformName, @RequestParam @NotBlank(message = "uuid不能为空") String uuid) {
         return R.ok(userService.getUserDTOByPlatform(platformName, uuid));
     }
 

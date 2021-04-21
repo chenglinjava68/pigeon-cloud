@@ -1,5 +1,6 @@
 package cn.yiidii.pigeon.rbac.service.impl;
 
+import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.rbac.api.entity.SysLog;
 import cn.yiidii.pigeon.rbac.api.form.OptLogForm;
@@ -11,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author: YiiDii Wang
@@ -24,12 +26,17 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
     public void createOptLog(OptLogForm optLogForm) {
         SysLog sysLog = new SysLog();
         BeanUtils.copyProperties(optLogForm, sysLog);
+        // 时间
         sysLog.setCreateTime(LocalDateTime.now());
-        Long currUid = SecurityUtils.getUser().getId();
-        sysLog.setCreateTime(LocalDateTime.now());
-        sysLog.setCreatedBy(currUid);
         sysLog.setUpdateTime(LocalDateTime.now());
-        sysLog.setUpdatedBy(currUid);
+
+        // 创建人
+        PigeonUser user = SecurityUtils.getUser();
+        if (Objects.nonNull(user)) {
+            Long currUid = user.getId();
+            sysLog.setCreatedBy(currUid);
+            sysLog.setUpdatedBy(currUid);
+        }
         this.save(sysLog);
     }
 }

@@ -71,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public UserDTO getUserDTOByUsername(String username) {
         UserBO userBO = userMapper.getUserBOByUsername(username);
         if (Objects.isNull(userBO)) {
-            throw new BizException("用户不存在");
+            throw new BizException(StrUtil.format("用户[{}]不存在", username));
         }
         List<RoleDTO> roleDTOList = dozerUtils.mapList(userBO.getRoles(), RoleDTO.class);
         List<ResourceBO> resources = userBO.getResources();
@@ -111,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         User user = this.lambdaQuery().eq(User::getSource, source).eq(User::getUuid, uuid).one();
         if (Objects.isNull(user)) {
-            throw new BizException("用户不存在");
+            throw new BizException(StrUtil.format("用户[{}]不存在", platformName + uuid));
         }
 
         return this.getUserDTOByUsername(user.getUsername());
