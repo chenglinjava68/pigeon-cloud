@@ -48,6 +48,7 @@ public class UserController {
     @PostMapping
     @ApiOperation(value = "创建用户")
     @PreAuthorize("@pms.hasPermission('sys:user:add')")
+    @Log(content = "'创建用户' + #userForm.username + '(' + #userForm.name + ')'", exception = "")
     public R<UserVO> create(@Validated @RequestBody UserForm userForm) {
         Assert.isTrue(StringUtils.equals(userForm.getPassword(), userForm.getConfirmPassword()), "两次输入密码不一致");
         User user = userService.create(userForm);
@@ -57,6 +58,7 @@ public class UserController {
     @PutMapping("/{id}")
     @ApiOperation(value = "编辑用户")
     @PreAuthorize("@pms.hasPermission('sys:user:edit')")
+    @Log(content = "'编辑用户:' + #userForm.username + '(' + #userForm.name + ')'", exception = "")
     public R<UserVO> updateUser(@Validated(value = SuperEntity.Update.class) @RequestBody UserForm userForm) {
         userService.update(userForm);
         return R.ok(null, "编辑成功");
@@ -65,6 +67,7 @@ public class UserController {
     @DeleteMapping("/delBatch")
     @ApiOperation(value = "删除用户")
     @PreAuthorize("@pms.hasPermission('sys:user:delete')")
+    @Log(content = "'删除用户: ' + #uidList", exception = "")
     public R<UserVO> delete(@RequestBody List<Long> uidList) {
         userService.deleteUser(uidList);
         return R.ok(null, "删除用户成功");
@@ -93,7 +96,6 @@ public class UserController {
 
     @PostMapping("/list")
     @ApiOperation(value = "用户列表", notes = "需要登陆，且需要[user]权限")
-    @Log(content = "'用户列表'", exception = "用户列表异常")
     public R<IPage<UserVO>> list(@RequestBody @Validated UserSearchParam searchParam) {
         return R.ok(userService.list(searchParam));
     }
