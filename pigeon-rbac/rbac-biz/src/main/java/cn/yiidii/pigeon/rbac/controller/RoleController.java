@@ -2,6 +2,7 @@ package cn.yiidii.pigeon.rbac.controller;
 
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.base.entity.SuperEntity.*;
+import cn.yiidii.pigeon.log.annotation.Log;
 import cn.yiidii.pigeon.rbac.api.entity.Menu;
 import cn.yiidii.pigeon.rbac.api.entity.Permission;
 import cn.yiidii.pigeon.rbac.api.entity.Role;
@@ -39,6 +40,7 @@ public class RoleController {
     @PostMapping
     @ApiOperation(value = "创建角色")
     @PreAuthorize("@pms.hasPermission('sys:role:add')")
+    @Log(content = "'创建角色:' + #roleForm.code + '(' + #roleForm.name + ')'", exception = "")
     public R create(@Validated(value = {Add.class}) @RequestBody RoleForm roleForm) {
         int row = roleService.create(roleForm);
         return R.ok(null, row > 0 ? "创建角色成功" : "创建角色失败");
@@ -47,6 +49,7 @@ public class RoleController {
     @PutMapping
     @ApiOperation(value = "更新角色")
     @PreAuthorize("@pms.hasPermission('sys:role:edit')")
+    @Log(content = "'更新角色:' + #roleForm.code + '(' + #roleForm.name + ')'", exception = "")
     public R update(@Validated(value = {Update.class}) @RequestBody RoleForm roleForm) {
         boolean update = roleService.update(roleForm);
         return R.ok(null, update ? "更新角色成功" : "更新角色失败");
@@ -59,26 +62,27 @@ public class RoleController {
     }
 
     @GetMapping("/user/{roleId}")
-    @ApiOperation(value = "角色用户")
+    @ApiOperation(value = "查询角色用户")
     public R<List<Long>> user(@PathVariable Long roleId) {
         return R.ok(roleService.getRoleUserIdList(roleId));
     }
 
     @GetMapping("/menu/{roleId}")
-    @ApiOperation(value = "角色菜单")
+    @ApiOperation(value = "查询角色菜单")
     public R<List<Menu>> menu(@PathVariable Long roleId) {
         return R.ok(roleService.getRoleMenu(roleId));
     }
 
     @GetMapping("/perms/{roleId}")
-    @ApiOperation(value = "角色权限")
+    @ApiOperation(value = "查询角色权限")
     public R<List<Permission>> perms(@PathVariable Long roleId) {
         return R.ok(roleService.getRolePermission(roleId));
     }
 
     @PostMapping("/bindUser")
-    @ApiOperation(value = "绑定用户")
+    @ApiOperation(value = "角色绑定用户")
     @PreAuthorize("@pms.hasPermission('sys:role:bindUser')")
+    @Log(content = "'角色绑定用户:' + #roleUserForm.roleId + '(' + #roleUserForm.userIdList + ')'", exception = "")
     public R bindUser(@RequestBody RoleUserForm roleUserForm) {
         roleService.bindUser(roleUserForm);
         return R.ok(null, "绑定用户成功");
@@ -87,6 +91,7 @@ public class RoleController {
     @PostMapping("/bindResource")
     @ApiOperation(value = "绑定菜单权限")
     @PreAuthorize("@pms.hasPermission('sys:role:bindResource')")
+    @Log(content = "'绑定菜单权限:' + #roleResourceForm.roleId + '(menu:' + #roleResourceForm.menuIdList + '; res: ' + #roleResourceForm.permissionIdList + ')'", exception = "")
     public R bindResource(@RequestBody RoleResourceForm roleResourceForm) {
         roleService.bindResource(roleResourceForm);
         return R.ok(null, "绑定菜单权限成功");
@@ -95,6 +100,7 @@ public class RoleController {
     @DeleteMapping("/delBatch")
     @ApiOperation(value = "删除角色")
     @PreAuthorize("@pms.hasPermission('sys:role:delete')")
+    @Log(content = "'删除角色: ' + #roleIdList", exception = "")
     public R delRole(@RequestBody List<Long> roleIdList) {
         roleService.delRole(roleIdList);
         return R.ok(null, "删除角色成功");
