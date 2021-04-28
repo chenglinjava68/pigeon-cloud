@@ -27,32 +27,32 @@
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-security</artifactId>
+            <artifactId>pigeon-starter-security</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-knife4j</artifactId>
+            <artifactId>pigeon-starter-knife4j</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-mail</artifactId>
+            <artifactId>pigeon-starter-mail</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-rabbit</artifactId>
+            <artifactId>pigeon-starter-rabbit</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-kafka</artifactId>
+            <artifactId>pigeon-starter-kafka</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-feign</artifactId>
+            <artifactId>pigeon-starter-feign</artifactId>
             <version>1.0.0</version>
         </dependency>
 

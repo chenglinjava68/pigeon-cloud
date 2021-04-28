@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-feign</artifactId>
+            <artifactId>pigeon-starter-feign</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>

@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>cn.yiidii.pigeon</groupId>
-            <artifactId>pigeon-log</artifactId>
+            <artifactId>pigeon-starter-log</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
