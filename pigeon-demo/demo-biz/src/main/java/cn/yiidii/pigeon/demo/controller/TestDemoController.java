@@ -2,10 +2,11 @@ package cn.yiidii.pigeon.demo.controller;
 
 import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.R;
-import cn.yiidii.pigeon.common.core.redis.RedisOps;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
 import cn.yiidii.pigeon.common.mail.core.MailTemplate;
+import cn.yiidii.pigeon.common.redis.core.RedisOps;
+import cn.yiidii.pigeon.common.redis.lock.RedisDistributedLock;
 import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.demo.api.dto.EmailDTO;
@@ -59,6 +60,7 @@ public class TestDemoController {
 
     private final UserFeign userFeign;
     private final RedisOps redisOps;
+    private final RedisDistributedLock redisDistributedLock;
     private final Environment env;
     private final DemoMapper demoMapper;
     private final MailTemplate mailTemplate;
@@ -79,10 +81,27 @@ public class TestDemoController {
     })
     public R<String> redis(@RequestParam String key, @RequestParam String value) {
         redisOps.set(key, value);
-        Map<String, String> map = new HashMap<>(16);
+        Map<String, Object> map = new HashMap<>(16);
         map.put(key, value);
-        redisOps.putHashValues("hash", map);
+        redisOps.hmset("hash", map);
         return R.ok(null, JSONObject.toJSONString(map));
+    }
+
+    @GetMapping("/test/redisDistributedLock/lock")
+    @ApiOperation(value = "测试redisDistributedLock  加锁")
+    public R<String> redisDistributedLockLock(@RequestParam String key, @RequestParam String requestId, @RequestParam(required = false) Long expire) {
+        Boolean lock = redisDistributedLock.tryLock(key, requestId, expire);
+        String msg = StrUtil.format("获取分布式锁{}. key:{}, requestId: {}, expire: {}", lock ? "成功" : "失败", key, requestId);
+        log.info(msg);
+        return lock ? R.ok(null, msg) : R.failed(null, msg);
+    }
+
+    @GetMapping("/test/redisDistributedLock/unlock")
+    @ApiOperation(value = "测试redisDistributedLock 释放锁")
+    public R<String> redisDistributedLockUnLock(@RequestParam String key, @RequestParam String requestId) {
+        Boolean success = redisDistributedLock.releaseLock(key, requestId);
+        return success ? R.ok(null, StrUtil.format("释放分布式锁成功. key:{}, requestId: {}, expire: {}", key, requestId)) :
+                R.failed(null, StrUtil.format("释放分布式锁失败. key:{}, requestId: {}, expire: {}", key, requestId));
     }
 
     @GetMapping("/test/env")

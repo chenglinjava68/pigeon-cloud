@@ -55,6 +55,11 @@
             <artifactId>pigeon-starter-feign</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-starter-redis</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
 
         <dependency>
