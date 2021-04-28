@@ -31,6 +31,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.core.env.Environment;
@@ -46,6 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * @author: YiiDii Wang
@@ -61,6 +64,7 @@ public class TestDemoController {
     private final UserFeign userFeign;
     private final RedisOps redisOps;
     private final RedisDistributedLock redisDistributedLock;
+    private final RedissonClient redissonClient;
     private final Environment env;
     private final DemoMapper demoMapper;
     private final MailTemplate mailTemplate;
@@ -102,6 +106,46 @@ public class TestDemoController {
         Boolean success = redisDistributedLock.releaseLock(key, requestId);
         return success ? R.ok(null, StrUtil.format("释放分布式锁成功. key:{}, requestId: {}, expire: {}", key, requestId)) :
                 R.failed(null, StrUtil.format("释放分布式锁失败. key:{}, requestId: {}, expire: {}", key, requestId));
+    }
+
+    @GetMapping("/test/redisson/lock")
+    @ApiOperation(value = "测试redisson 加锁")
+    @SneakyThrows
+    public R<String> redissonLock(@RequestParam String key, @RequestParam(required = false) Long expire) {
+        RLock rLock = redissonClient.getLock(key);
+        boolean lock = rLock.tryLock(expire, TimeUnit.SECONDS);
+        String msg = StrUtil.format("获取Redisson分布式锁{}. key:{}", lock ? "成功" : "失败", key);
+        log.info(msg);
+        return lock ? R.ok(null, msg) : R.failed(null, msg);
+    }
+
+    @GetMapping("/test/redisson/unLock")
+    @ApiOperation(value = "测试redisson 释放锁")
+    public R<String> redissonUnLock(@RequestParam String key) {
+        String msg = StrUtil.format("开始释放Redisson分布式锁. key:{}", key);
+        log.info(msg);
+        RLock rLock = redissonClient.getLock(key);
+        rLock.unlock();
+        return R.ok(null, StrUtil.format("释放Redisson锁成功, key: {}", key));
+    }
+
+    @GetMapping("/test/redisson/all")
+    @ApiOperation(value = "测试redisson all")
+    @SneakyThrows
+    public R<String> redissonLockAll(@RequestParam String key, @RequestParam(required = false) Long expire) {
+        RLock rLock = redissonClient.getLock(key);
+
+        boolean lock = rLock.tryLock(expire, TimeUnit.SECONDS);
+        String msg = StrUtil.format("获取Redisson分布式锁{}. key:{}", lock ? "成功" : "失败", key);
+        log.info(msg);
+
+        TimeUnit.SECONDS.sleep(5L);
+
+        rLock.unlock();
+        msg = "释放Redisson分布式锁成功";
+        log.info(msg);
+
+        return R.ok(msg);
     }
 
     @GetMapping("/test/env")
