@@ -1,9 +1,12 @@
 package cn.yiidii.pigeon.demo.controller;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
+import cn.yiidii.pigeon.common.ide.annotation.Ide;
 import cn.yiidii.pigeon.common.mail.core.MailTemplate;
 import cn.yiidii.pigeon.common.redis.core.RedisOps;
 import cn.yiidii.pigeon.common.redis.lock.RedisDistributedLock;
@@ -47,8 +50,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 
 /**
  * @author: YiiDii Wang
@@ -339,4 +343,14 @@ public class TestDemoController {
         log.info("trace userDTO: {}", JSONObject.toJSON(admin));
         return R.ok(null, StrUtil.format("tarce test"));
     }
+
+    @SneakyThrows
+    @GetMapping("/test/ide")
+    @ApiOperation(value = "测试接口幂等")
+    @Ide
+    public R ide(@RequestParam Long second) {
+        TimeUnit.SECONDS.sleep(second);
+        return R.ok(null, StrUtil.format("Ide test, second: {}s", second));
+    }
+
 }
