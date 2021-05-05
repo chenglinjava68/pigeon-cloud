@@ -25,13 +25,5 @@ spring:
         password: nacos
         server-addr: 127.0.0.1:8848
         namespace: 0f3a40b9-e065-4e5b-9d87-d7d16c85f107
-  boot:
-    admin:
-      ui:
-        title: @artifactId@-server
-      client:
-        instance:
-          metadata:
-            tags:
-              environment: local
+
 

@@ -1,5 +1,6 @@
-package cn.yiidii.pigeon.admin.config;
+package cn.yiidii.pigeon.admin;
 
+import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -10,6 +11,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @author: YiiDii Wang
  * @create: 2021-04-29 19:30
  */
+@EnableAdminServer
 @EnableDiscoveryClient
 @SpringBootApplication
 public class AdminApplication {
