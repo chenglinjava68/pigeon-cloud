@@ -12,6 +12,8 @@ import cn.yiidii.pigeon.common.redis.core.RedisOps;
 import cn.yiidii.pigeon.common.redis.lock.RedisDistributedLock;
 import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
+import cn.yiidii.pigeon.common.sftp.SftpConnection;
+import cn.yiidii.pigeon.common.sftp.util.JschUtil;
 import cn.yiidii.pigeon.demo.api.dto.EmailDTO;
 import cn.yiidii.pigeon.demo.api.entity.Demo;
 import cn.yiidii.pigeon.demo.mapper.DemoMapper;
@@ -74,6 +76,7 @@ public class TestDemoController {
     private final MailTemplate mailTemplate;
     private final IMailProducer mailProducer;
     private final LogChannel logChannel;
+    private final JschUtil jschUtil;
 
     @GetMapping("/test/hello")
     @ApiOperation(value = "测试hello接口")
@@ -351,6 +354,13 @@ public class TestDemoController {
     public R ide(@RequestParam Long second) {
         TimeUnit.SECONDS.sleep(second);
         return R.ok(null, StrUtil.format("Ide test, second: {}s", second));
+    }
+
+    @PostMapping("/test/sftp")
+    @ApiOperation(value = "测试sftp")
+    public R sftp(@RequestBody SftpConnection connection) {
+        String home = jschUtil.getHome(connection);
+        return R.ok(null, StrUtil.format("home: {}", home));
     }
 
 }
