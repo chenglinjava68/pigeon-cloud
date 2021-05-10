@@ -1,8 +1,6 @@
 package cn.yiidii.pigeon.demo.controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
@@ -33,6 +31,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -48,12 +48,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -361,6 +356,21 @@ public class TestDemoController {
     public R sftp(@RequestBody SftpConnection connection) {
         String home = jschUtil.getHome(connection);
         return R.ok(null, StrUtil.format("home: {}", home));
+    }
+
+    @PostMapping("/test/sftp/execCmd")
+    @ApiOperation(value = "测试sftp执行命令")
+    public R execCmd(@RequestBody SftpCmdForm form) throws Exception {
+        List<String> result = jschUtil.execCmd(form.getConnection(), form.getCmd());
+        return R.ok(result, StrUtil.format("执行[{}]成功", form.getCmd()));
+    }
+
+    @Data
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    public static class SftpCmdForm {
+        private SftpConnection connection;
+        private String cmd;
     }
 
 }
