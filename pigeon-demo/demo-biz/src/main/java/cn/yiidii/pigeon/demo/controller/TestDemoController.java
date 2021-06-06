@@ -3,6 +3,7 @@ package cn.yiidii.pigeon.demo.controller;
 import cn.hutool.core.util.StrUtil;
 import cn.yiidii.pigeon.common.core.base.R;
 import cn.yiidii.pigeon.common.core.util.HttpClientUtil;
+import cn.yiidii.pigeon.common.core.util.SpringContextHolder;
 import cn.yiidii.pigeon.common.core.util.dto.HttpClientResult;
 import cn.yiidii.pigeon.common.ide.annotation.Ide;
 import cn.yiidii.pigeon.common.mail.core.MailTemplate;
@@ -12,8 +13,11 @@ import cn.yiidii.pigeon.common.security.service.PigeonUser;
 import cn.yiidii.pigeon.common.security.util.SecurityUtils;
 import cn.yiidii.pigeon.common.sftp.SftpConnection;
 import cn.yiidii.pigeon.common.sftp.util.JschUtil;
+import cn.yiidii.pigeon.common.strategy.component.HandlerContext;
+import cn.yiidii.pigeon.common.strategy.handler.AbstractHandler;
 import cn.yiidii.pigeon.demo.api.dto.EmailDTO;
 import cn.yiidii.pigeon.demo.api.entity.Demo;
+import cn.yiidii.pigeon.demo.handler.c.SuperCHandler;
 import cn.yiidii.pigeon.demo.mapper.DemoMapper;
 import cn.yiidii.pigeon.demo.message.producer.IMailProducer;
 import cn.yiidii.pigeon.kafka.channel.LogChannel;
@@ -24,6 +28,8 @@ import cn.yiidii.pigeon.rbac.api.feign.UserFeign;
 import cn.yiidii.pigeon.rbac.api.form.UserForm;
 import cn.yiidii.pigeon.rbac.api.vo.UserVO;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import io.seata.tm.api.GlobalTransactionContext;
@@ -45,6 +51,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -52,8 +59,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author: YiiDii Wang
- * @create: 2021-02-11 13:35
+ * @author YiiDii Wang
+ * @create 2021-02-11 13:35
  */
 @RestController
 @Slf4j
@@ -72,6 +79,7 @@ public class TestDemoController {
     private final IMailProducer mailProducer;
     private final LogChannel logChannel;
     private final JschUtil jschUtil;
+    private final HandlerContext handlerContext;
 
     @GetMapping("/test/hello")
     @ApiOperation(value = "测试hello接口")
@@ -82,8 +90,8 @@ public class TestDemoController {
     @GetMapping("/test/redis")
     @ApiOperation(value = "测试redis接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "key", value = "缓存键", required = true, paramType = "query", dataType = "String", defaultValue = ""),
-            @ApiImplicitParam(name = "value", value = "缓存值", required = true, paramType = "query", dataType = "String", defaultValue = "")
+            @ApiImplicitParam(name = "key", value = "缓存键", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "value", value = "缓存值", required = true, paramType = "query", dataType = "String")
     })
     public R<String> redis(@RequestParam String key, @RequestParam String value) {
         redisOps.set(key, value);
@@ -152,7 +160,7 @@ public class TestDemoController {
 
     @GetMapping("/test/env")
     @ApiOperation(value = "获取环境变量")
-    @ApiImplicitParam(name = "name", value = "变量名称", required = true, paramType = "query", dataType = "String", defaultValue = "")
+    @ApiImplicitParam(name = "name", value = "变量名称", required = true, paramType = "query", dataType = "String")
     public R<String> env(@RequestParam String name) {
         return R.ok(null, env.getProperty(name));
     }
@@ -168,7 +176,7 @@ public class TestDemoController {
     /**
      * 需要登陆，但不需要权限
      *
-     * @return
+     * @return R
      */
     @GetMapping("aaa")
     @ApiOperation(value = "aaa接口", notes = "需要登陆，但不需要权限")
@@ -179,7 +187,7 @@ public class TestDemoController {
     /**
      * 需要登陆，但不需要权限
      *
-     * @return
+     * @return R
      */
     @GetMapping("bbb")
     @PreAuthorize("@pms.hasPermission('bbb')")
@@ -191,13 +199,13 @@ public class TestDemoController {
     /**
      * 需要登陆，且需要user权限
      *
-     * @param username
-     * @return
+     * @param username 用户名
+     * @return R
      */
     @GetMapping("user/{username}")
     @PreAuthorize("@pms.hasPermission('user')")
     @ApiOperation(value = "user接口", notes = "需要登陆，且需要[user]权限")
-    @ApiImplicitParam(name = "username", value = "用户名", required = true, paramType = "path", dataType = "String", defaultValue = "")
+    @ApiImplicitParam(name = "username", value = "用户名", required = true, paramType = "path", dataType = "String")
     public R<UserDTO> user(@PathVariable String username) {
         R<UserDTO> userDTOResp = userFeign.getUserDTOByUsername(username);
         log.info("test user: " + JSONObject.toJSON(userDTOResp));
@@ -364,6 +372,24 @@ public class TestDemoController {
         List<String> result = jschUtil.execCmd(form.getConnection(), form.getCmd());
         return R.ok(result, StrUtil.format("执行[{}]成功", form.getCmd()));
     }
+
+    @GetMapping("/test/dynamicDataSource")
+    @ApiOperation(value = "测试动态数据源")
+    public R<List<Demo>> dynamicDataSource() {
+        LambdaQueryWrapper<Demo> queryWrapper = Wrappers.lambdaQuery();
+        List<Demo> demos = demoMapper.selectList(queryWrapper);
+        return R.ok(demos);
+    }
+
+    @GetMapping("/test/strategy")
+    @ApiOperation(value = "测试策略模式")
+    public R strategy(@RequestParam String biz) {
+        String beanName = handlerContext.getBeanName(biz);
+        final SuperCHandler bean = SpringContextHolder.getBean(beanName, SuperCHandler.class);
+        bean.handle();
+        return R.ok();
+    }
+
 
     @Data
     @AllArgsConstructor

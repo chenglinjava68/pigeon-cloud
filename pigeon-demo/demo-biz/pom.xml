@@ -70,6 +70,16 @@
             <artifactId>pigeon-starter-sftp</artifactId>
             <version>1.0.0</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.yiidii.pigeon</groupId>-->
+<!--            <artifactId>pigeon-starter-datasource</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.yiidii.pigeon</groupId>
+            <artifactId>pigeon-starter-strategy</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
 
         <dependency>
@@ -128,6 +138,11 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.3</version>
         </dependency>
     </dependencies>
 
