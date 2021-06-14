@@ -28,14 +28,14 @@ services:
     container_name: pigeon-auth
     hostname: pigeon-auth
 
-  pigeon-demo:
-    build:
-      context: ./pigeon-demo/demo-biz
-    restart: always
-    ports:
-      - 1150:1150
-    container_name: pigeon-demo
-    hostname: pigeon-demo
+#  pigeon-demo:
+#    build:
+#      context: ./pigeon-demo/demo-biz
+#    restart: always
+#    ports:
+#      - 1150:1150
+#    container_name: pigeon-demo
+#    hostname: pigeon-demo
 
   pigeon-openapi:
     build:
