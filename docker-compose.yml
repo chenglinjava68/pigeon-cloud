@@ -54,3 +54,12 @@ services:
       - 1144:1144
     container_name: pigeon-file
     hostname: pigeon-file
+
+  pigeon-admin:
+    build:
+      context: ./pigeon-governance/pigeon-admin
+    restart: always
+    ports:
+      - 1151:1151
+    container_name: pigeon-admin
+    hostname: pigeon-admin
