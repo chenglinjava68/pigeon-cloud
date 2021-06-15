@@ -4,7 +4,7 @@ MAINTAINER wangyiidii <wangyiidii@163.com>
 
 # VOLUME logs
 
-ADD target/pigeon-openapi.jar /usr/local/app/app.jar
+ADD target/pigeon-admin.jar /usr/local/app/app.jar
 
 ENV LANGUAGE=zh_CN.UTF-8  TZ=Asia/Shanghai
 
