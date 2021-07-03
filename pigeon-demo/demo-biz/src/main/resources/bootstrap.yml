@@ -32,3 +32,10 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
+
+pigeon:
+  es:
+    uris:
+      - "127.0.0.1:9200"
+    username: elastic
+    password: ossBfV3FrNrK7NlnBZel
