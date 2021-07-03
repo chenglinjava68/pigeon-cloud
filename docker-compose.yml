@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   pigeon-gateway:
     build:
@@ -8,6 +8,11 @@ services:
       - 1140:1140
     container_name: pigeon-gateway
     hostname: pigeon-gateway
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
 
   pigeon-rbac:
     build:
@@ -17,7 +22,11 @@ services:
       - 1141:1141
     container_name: pigeon-rbac
     hostname: pigeon-rbac
-
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
 
   pigeon-auth:
     build:
@@ -27,6 +36,11 @@ services:
       - 1142:1142
     container_name: pigeon-auth
     hostname: pigeon-auth
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
 
 #  pigeon-demo:
 #    build:
@@ -45,6 +59,11 @@ services:
       - 1143:1143
     container_name: pigeon-openapi
     hostname: pigeon-openapi
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
 
   pigeon-file:
     build:
@@ -54,6 +73,11 @@ services:
       - 1144:1144
     container_name: pigeon-file
     hostname: pigeon-file
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
 
   pigeon-admin:
     build:
@@ -63,3 +87,8 @@ services:
       - 1151:1151
     container_name: pigeon-admin
     hostname: pigeon-admin
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
