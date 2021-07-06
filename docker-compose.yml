@@ -3,92 +3,135 @@ services:
   pigeon-gateway:
     build:
       context: ./pigeon-gateway
+      args:
+        JVM_XMS: $JVM_XMS
+        JVM_XMX: $JVM_XMX
+        NACOS_CONFIG_SERVER_ADDR: $NACOS_CONFIG_SERVER_ADDR
+        NACOS_CONFIG_NAMESPACE: $NACOS_CONFIG_NAMESPACE
+        NACOS_DISCOVERY_SERVER_ADDR: $NACOS_DISCOVERY_SERVER_ADDR
+        NACOS_DISCOVERY_NAMESPACE: $NACOS_DISCOVERY_NAMESPACE
+    container_name: pigeon-gateway
+    hostname: pigeon-gateway
     restart: always
     ports:
       - 1140:1140
-    container_name: pigeon-gateway
-    hostname: pigeon-gateway
+    networks:
+      - pigeon_net
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 128M
+          memory: $DOCKER_MEM
 
   pigeon-rbac:
     build:
       context: ./pigeon-rbac/rbac-biz
+      args:
+        JVM_XMS: $JVM_XMS
+        JVM_XMX: $JVM_XMX
+        NACOS_CONFIG_SERVER_ADDR: $NACOS_CONFIG_SERVER_ADDR
+        NACOS_CONFIG_NAMESPACE: $NACOS_CONFIG_NAMESPACE
+        NACOS_DISCOVERY_SERVER_ADDR: $NACOS_DISCOVERY_SERVER_ADDR
+        NACOS_DISCOVERY_NAMESPACE: $NACOS_DISCOVERY_NAMESPACE
+    container_name: pigeon-rbac
+    hostname: pigeon-rbac
     restart: always
     ports:
       - 1141:1141
-    container_name: pigeon-rbac
-    hostname: pigeon-rbac
+    networks:
+      - pigeon_net
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 128M
+          memory: $DOCKER_MEM
 
   pigeon-auth:
     build:
       context: ./pigeon-auth
+      args:
+        JVM_XMS: $JVM_XMS
+        JVM_XMX: $JVM_XMX
+        NACOS_CONFIG_SERVER_ADDR: $NACOS_CONFIG_SERVER_ADDR
+        NACOS_CONFIG_NAMESPACE: $NACOS_CONFIG_NAMESPACE
+        NACOS_DISCOVERY_SERVER_ADDR: $NACOS_DISCOVERY_SERVER_ADDR
+        NACOS_DISCOVERY_NAMESPACE: $NACOS_DISCOVERY_NAMESPACE
+    container_name: pigeon-auth
+    hostname: pigeon-auth
     restart: always
     ports:
       - 1142:1142
-    container_name: pigeon-auth
-    hostname: pigeon-auth
+    networks:
+      - pigeon_net
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 128M
-
-#  pigeon-demo:
-#    build:
-#      context: ./pigeon-demo/demo-biz
-#    restart: always
-#    ports:
-#      - 1150:1150
-#    container_name: pigeon-demo
-#    hostname: pigeon-demo
+          memory: $DOCKER_MEM
 
   pigeon-openapi:
     build:
       context: ./pigeon-openapi
+      args:
+        JVM_XMS: $JVM_XMS
+        JVM_XMX: $JVM_XMX
+        NACOS_CONFIG_SERVER_ADDR: $NACOS_CONFIG_SERVER_ADDR
+        NACOS_CONFIG_NAMESPACE: $NACOS_CONFIG_NAMESPACE
+        NACOS_DISCOVERY_SERVER_ADDR: $NACOS_DISCOVERY_SERVER_ADDR
+        NACOS_DISCOVERY_NAMESPACE: $NACOS_DISCOVERY_NAMESPACE
+    container_name: pigeon-openapi
+    hostname: pigeon-openapi
     restart: always
     ports:
       - 1143:1143
-    container_name: pigeon-openapi
-    hostname: pigeon-openapi
+    networks:
+      - pigeon_net
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 128M
+          memory: $DOCKER_MEM
 
   pigeon-file:
     build:
       context: ./pigeon-file/file-biz
+      args:
+        JVM_XMS: $JVM_XMS
+        JVM_XMX: $JVM_XMX
+        NACOS_CONFIG_SERVER_ADDR: $NACOS_CONFIG_SERVER_ADDR
+        NACOS_CONFIG_NAMESPACE: $NACOS_CONFIG_NAMESPACE
+        NACOS_DISCOVERY_SERVER_ADDR: $NACOS_DISCOVERY_SERVER_ADDR
+        NACOS_DISCOVERY_NAMESPACE: $NACOS_DISCOVERY_NAMESPACE
+    container_name: pigeon-file
+    hostname: pigeon-file
     restart: always
     ports:
       - 1144:1144
-    container_name: pigeon-file
-    hostname: pigeon-file
+    networks:
+      - pigeon_net
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 128M
+          memory: $DOCKER_MEM
 
   pigeon-admin:
     build:
       context: ./pigeon-governance/pigeon-admin
+      args:
+        JVM_XMS: $JVM_XMS
+        JVM_XMX: $JVM_XMX
+        NACOS_CONFIG_SERVER_ADDR: $NACOS_CONFIG_SERVER_ADDR
+        NACOS_CONFIG_NAMESPACE: $NACOS_CONFIG_NAMESPACE
+        NACOS_DISCOVERY_SERVER_ADDR: $NACOS_DISCOVERY_SERVER_ADDR
+        NACOS_DISCOVERY_NAMESPACE: $NACOS_DISCOVERY_NAMESPACE
+    container_name: pigeon-admin
+    hostname: pigeon-admin
     restart: always
     ports:
       - 1151:1151
-    container_name: pigeon-admin
-    hostname: pigeon-admin
+    networks:
+      - pigeon_net
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 128M
+          memory: $DOCKER_MEM
+
+networks:
+  pigeon_net:
+    external: true
