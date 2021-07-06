@@ -1,12 +1,15 @@
 package cn.yiidii.pigeon.auth.config;
 
 import cn.yiidii.pigeon.auth.granter.social.SocialAuthenticationGranter;
-import cn.yiidii.pigeon.common.security.config.TokenStoreConfig;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,12 +35,6 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * AuthorizationServerConfig
  *
@@ -47,9 +44,6 @@ import java.util.List;
 @Slf4j
 @Configuration
 @EnableAuthorizationServer
-@Import({
-        TokenStoreConfig.class
-})
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @PostConstruct
